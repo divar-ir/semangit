@@ -1,8 +1,9 @@
 package cli
 
-import "flag"
-
-const RevisionNone = ""
+import (
+	"flag"
+	"semangit/src/gitRepoManager"
+)
 
 type cli struct {
 	repoDir      string
@@ -12,8 +13,8 @@ type cli struct {
 
 func NewCliAndRun() cli {
 	c := cli{
-		fromRevision: RevisionNone,
-		toRevision:   RevisionNone,
+		fromRevision: gitRepoManager.RevisionNone,
+		toRevision:   gitRepoManager.RevisionNone,
 	}
 	c.parseFlags()
 
@@ -34,7 +35,11 @@ func (c *cli) GetToRevision() string {
 
 func (c *cli) parseFlags() {
 	flag.StringVar(&c.repoDir, "d", ".", "Repo root path. Defaults to current directory.")
-	flag.StringVar(&c.fromRevision, "f", RevisionNone, "From revision. A git reference to get version from.")
-	flag.StringVar(&c.toRevision, "t", RevisionNone, "From revision. A git reference to get version from.")
+	flag.StringVar(&c.fromRevision, "f", gitRepoManager.RevisionNone, "From revision. A git reference to get version from.")
+	flag.StringVar(&c.toRevision, "t", gitRepoManager.RevisionNone, "From revision. A git reference to get version from.")
 	flag.Parse()
+
+	if c.GetToRevision() == gitRepoManager.RevisionNone {
+		panic("Provide TO revision (-t) to compare the version according to it.")
+	}
 }
