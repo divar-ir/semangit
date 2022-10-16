@@ -1,21 +1,16 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"github.com/go-git/go-git/v5/plumbing"
+	"semangit/src/cli"
 )
 import "github.com/go-git/go-git/v5"
 
-const RevisionNone = ""
-
 func main() {
-	repoDir := flag.String("d", ".", "Repo root path. Defaults to current directory.")
-	fromRevision := flag.String("f", RevisionNone, "From revision. A git reference to get version from.")
-	toRevision := flag.String("t", RevisionNone, "From revision. A git reference to get version from.")
-	flag.Parse()
-	fmt.Println("Checking repo: " + *repoDir + " ...")
-	repo, err := git.PlainOpen(*repoDir)
+	c := cli.NewCliAndRun()
+	fmt.Println("Checking repo: " + c.GetRepoDir() + " ...")
+	repo, err := git.PlainOpen(c.GetRepoDir())
 	if err != nil {
 		panic(err)
 	}
@@ -23,20 +18,20 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	if *fromRevision != RevisionNone {
+	if c.GetFromRevision() != cli.RevisionNone {
 		err = worktree.Checkout(&git.CheckoutOptions{
-			Branch: plumbing.ReferenceName("refs/heads/" + *fromRevision),
+			Branch: plumbing.ReferenceName("refs/heads/" + c.GetFromRevision()),
 			Force:  true,
 		})
 		if err != nil {
 			panic(err)
 		}
 	}
-	if *toRevision == RevisionNone {
+	if c.GetToRevision() == cli.RevisionNone {
 		panic("Provide TO revision (-t) to compare the version on it.")
 	} else {
 		err = worktree.Checkout(&git.CheckoutOptions{
-			Branch: plumbing.ReferenceName("refs/heads/" + *toRevision),
+			Branch: plumbing.ReferenceName("refs/heads/" + c.GetToRevision()),
 			Force:  true,
 		})
 		if err != nil {
