@@ -6,10 +6,11 @@ import (
 	"os"
 	"os/exec"
 	"semangit/src/utils"
+	"strings"
 	"testing"
 )
 
-const CurrentBranch = "master"
+const MasterBranch = "master"
 const AnotherBranch = "test-branch"
 
 type TestSuite struct {
@@ -28,21 +29,29 @@ func (s *TestSuite) SetupTest() {
 	s.runGitCommand("commit", "--allow-empty", "-m", "Initial commit")
 	s.runGitCommand("checkout", "-b", AnotherBranch)
 	s.runGitCommand("commit", "--allow-empty", "-m", "Test commit")
-	s.runGitCommand("checkout", CurrentBranch)
+	s.runGitCommand("checkout", MasterBranch)
 	s.repoManager = NewGitRepoManger(s.repoDir)
 }
 
-func (s *TestSuite) runGitCommand(args ...string) {
+func (s *TestSuite) runGitCommand(args ...string) string {
 	newArgs := append([]string{"-C", s.repoDir}, args...)
 	cmd := exec.Command("git", newArgs...)
-	utils.PanicError(cmd.Run())
+	output := utils.GetResultOrPanicError(cmd.Output())
+	return string(output)
 }
 
 func (s *TestSuite) TearDownTest() {
 	utils.PanicError(os.RemoveAll(s.repoDir))
 }
 
+func (s *TestSuite) assertBranch(expectedBranch string) {
+	currentBranch := s.runGitCommand("rev-parse", "--abbrev-ref", "HEAD")
+	currentBranch = strings.Trim(currentBranch, "\n")
+	assert.Equal(s.T(), expectedBranch, currentBranch)
+}
+
 func (s *TestSuite) TestCanCheckoutToAnotherBranch() {
+	s.assertBranch(MasterBranch)
 	s.repoManager.Checkout(AnotherBranch)
-	assert.Fail(s.T(), "TODO: Write this test!")
+	s.assertBranch(AnotherBranch)
 }
