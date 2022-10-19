@@ -4,7 +4,10 @@ go 1.19
 
 require github.com/go-git/go-git/v5 v5.4.2
 
-require github.com/pkg/errors v0.9.1 // indirect
+require (
+	github.com/pkg/errors v0.9.1 // indirect
+	golang.org/x/mod v0.5.1 // indirect
+)
 
 require (
 	github.com/Microsoft/go-winio v0.4.16 // indirect
