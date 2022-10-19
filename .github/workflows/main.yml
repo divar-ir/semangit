@@ -13,7 +13,20 @@ jobs:
         with:
           go-version: '1.19.2'
       - name: Test
-        run: go test ./...
+        run: go test ./... -v -coverprofile=coverage.txt -covermode count
+      - name: Get coverage
+        run: echo "COVERAGE=$(go tool cover -func coverage.txt | tail -1 | awk '{print $3}')" >> $GITHUB_ENV
+      - name: Create coverage badge
+        uses: schneegans/dynamic-badges-action@v1.6.0
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: 03d07927044bdfe73aee59e6193dd8d5
+          filename: badge-coverage-semangit.json
+          label: Test Coverage
+          message: ${{ env.COVERAGE }}
+          valColorRange: ${{ env.COVERAGE }}
+          maxColorRange: 100
+          minColorRange: 0
   build:
     runs-on: ubuntu-20.04
     steps:
