@@ -26,6 +26,8 @@ func TestGitRepoManager(t *testing.T) {
 func (s *TestSuite) SetupTest() {
 	s.repoDir = utils.GetResultOrPanicError(os.MkdirTemp("", "sample-git-repo"))
 	s.runGitCommand("init")
+	s.runGitCommand("config", "user.email", "test@test.com")
+	s.runGitCommand("config", "user.name", "Test")
 	s.runGitCommand("commit", "--allow-empty", "-m", "Initial commit")
 	s.runGitCommand("checkout", "-b", AnotherBranch)
 	s.runGitCommand("commit", "--allow-empty", "-m", "Test commit")
