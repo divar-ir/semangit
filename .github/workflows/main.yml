@@ -14,3 +14,18 @@ jobs:
           go-version: '1.19.2'
       - name: Test
         run: go test ./...
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '1.19.2'
+      - name: Build
+        run: go build -o semangit ./src
+      - name: Smoke test
+        run: ./semangit --help
+      - uses: actions/upload-artifact@v2
+        with:
+          name: semangit
+          path: semangit
