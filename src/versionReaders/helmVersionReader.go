@@ -9,7 +9,7 @@ import (
 const VersionReaderNameHelm = "helm"
 
 type HelmVersionReader struct {
-	versionReader
+	baseReader
 }
 
 const ArgumentKeyRootDir = "root-dir"

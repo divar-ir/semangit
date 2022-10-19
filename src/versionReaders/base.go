@@ -8,17 +8,17 @@ type VersionReader interface {
 	ReadVersion(*ArgumentValues) (string, error)
 }
 
-type versionReader struct {
+type baseReader struct {
 }
 
-func (r *versionReader) GetArgumentDefinitions() []argumentDefinition {
+func (r *baseReader) GetArgumentDefinitions() []argumentDefinition {
 	return []argumentDefinition{}
 }
 
-func (r *versionReader) ReadVersion(arguments *ArgumentValues) (string, error) {
+func (r *baseReader) ReadVersion(arguments *ArgumentValues) (string, error) {
 	return "", fmt.Errorf("not implemented")
 }
 
-func (r *versionReader) GetName() string {
+func (r *baseReader) GetName() string {
 	panic("not implemented")
 }
