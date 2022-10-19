@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	c := cli.NewCliAndRun()
+	c := cli.RunNewCli()
 	fmt.Println("Repo: " + c.GetRepoDir())
 	repoManager := gitRepoManager.NewGitRepoManger(c.GetRepoDir())
 	if c.GetFromRevision() != gitRepoManager.RevisionNone {

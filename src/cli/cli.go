@@ -11,7 +11,7 @@ type cli struct {
 	toRevision   string
 }
 
-func NewCliAndRun() cli {
+func RunNewCli() cli {
 	c := cli{
 		fromRevision: gitRepoManager.RevisionNone,
 		toRevision:   gitRepoManager.RevisionNone,
