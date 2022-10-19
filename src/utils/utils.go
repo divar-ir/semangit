@@ -1,10 +1,8 @@
 package utils
 
-import "fmt"
-
 func GetResultOrPanicError[TResult interface{}](result TResult, error error) TResult {
 	if error != nil {
-		panic(fmt.Errorf("Error getting result.\nError: %v\nCurrent result: %v", error, result))
+		panic(error)
 	}
 	return result
 }
