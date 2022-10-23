@@ -38,7 +38,7 @@ jobs:
         run: go build -o semangit ./src
       - name: Smoke test
         run: ./semangit --help
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: semangit
           path: semangit
