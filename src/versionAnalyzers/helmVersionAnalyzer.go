@@ -12,6 +12,10 @@ type HelmVersionAnalyzer struct {
 	versionAnalyzer
 }
 
+func init() {
+	registerVersionAnalyzer(&HelmVersionAnalyzer{})
+}
+
 const argumentKeyRootDir = "root-dir"
 const VersionAnalyzerNameHelm = "helm"
 

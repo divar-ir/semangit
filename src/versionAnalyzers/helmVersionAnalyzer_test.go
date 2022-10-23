@@ -8,16 +8,16 @@ import (
 	"testing"
 )
 
-type TestSuite struct {
+type HelmVersionAnalyzerTestSuite struct {
 	suite.Suite
 	helmVersionAnalyzer HelmVersionAnalyzer
 }
 
-func Test(t *testing.T) {
-	suite.Run(t, new(TestSuite))
+func TestHelmVersionAnalyzer(t *testing.T) {
+	suite.Run(t, new(HelmVersionAnalyzerTestSuite))
 }
 
-func (s *TestSuite) SetupTest() {
+func (s *HelmVersionAnalyzerTestSuite) SetupTest() {
 	chartContent := `
 apiVersion: v2
 name: test-chart
@@ -48,11 +48,11 @@ appVersion: "0.1.0"
 	s.helmVersionAnalyzer = HelmVersionAnalyzer{}
 }
 
-func (s *TestSuite) TearDownTest() {
+func (s *HelmVersionAnalyzerTestSuite) TearDownTest() {
 	utils.PanicError(os.Remove("./Chart.yaml"))
 }
 
-func (s *TestSuite) TestCanReadChartVersion() {
+func (s *HelmVersionAnalyzerTestSuite) TestCanReadChartVersion() {
 	helmRootDir := "."
 	version := utils.GetResultOrPanicError(s.helmVersionAnalyzer.ReadVersion(".", &ArgumentValues{
 		argumentKeyRootDir: &helmRootDir,
@@ -60,7 +60,7 @@ func (s *TestSuite) TestCanReadChartVersion() {
 	assert.Equal(s.T(), "1.2.3", version)
 }
 
-func (s *TestSuite) TestVersionUpdateIsNotNeededWhenNoChangeIsMade() {
+func (s *HelmVersionAnalyzerTestSuite) TestVersionUpdateIsNotNeededWhenNoChangeIsMade() {
 	helmRootDir := "."
 	needsVersionUpdate := s.helmVersionAnalyzer.ChangeNeedsVersionUpdate([]string{}, &ArgumentValues{
 		argumentKeyRootDir: &helmRootDir,
@@ -68,7 +68,7 @@ func (s *TestSuite) TestVersionUpdateIsNotNeededWhenNoChangeIsMade() {
 	assert.False(s.T(), needsVersionUpdate)
 }
 
-func (s *TestSuite) TestVersionUpdateIsNotNeededWhenChangesAreOutsideHelmRootDir() {
+func (s *HelmVersionAnalyzerTestSuite) TestVersionUpdateIsNotNeededWhenChangesAreOutsideHelmRootDir() {
 	helmRootDir := "/some/project/helm/"
 	needsVersionUpdate := s.helmVersionAnalyzer.ChangeNeedsVersionUpdate([]string{
 		"/some/project/non-helm.txt",
@@ -78,7 +78,7 @@ func (s *TestSuite) TestVersionUpdateIsNotNeededWhenChangesAreOutsideHelmRootDir
 	assert.False(s.T(), needsVersionUpdate)
 }
 
-func (s *TestSuite) TestVersionUpdateIsNotNeededWhenChangesAreInsideHelmRootDirButOutsideTemplatesDir() {
+func (s *HelmVersionAnalyzerTestSuite) TestVersionUpdateIsNotNeededWhenChangesAreInsideHelmRootDirButOutsideTemplatesDir() {
 	helmRootDir := "/some/project/helm/"
 	needsVersionUpdate := s.helmVersionAnalyzer.ChangeNeedsVersionUpdate([]string{
 		"/some/project/helm/Chart.yaml",
@@ -88,7 +88,7 @@ func (s *TestSuite) TestVersionUpdateIsNotNeededWhenChangesAreInsideHelmRootDirB
 	assert.False(s.T(), needsVersionUpdate)
 }
 
-func (s *TestSuite) TestVersionUpdateIsNeededWhenSomeChangesAreInsideHelmTemplatesDir() {
+func (s *HelmVersionAnalyzerTestSuite) TestVersionUpdateIsNeededWhenSomeChangesAreInsideHelmTemplatesDir() {
 	helmRootDir := "/some/project/helm/"
 	needsVersionUpdate := s.helmVersionAnalyzer.ChangeNeedsVersionUpdate([]string{
 		"/some/project/helm/templates/deployment.yaml",
