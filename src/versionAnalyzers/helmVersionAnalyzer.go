@@ -13,7 +13,7 @@ type HelmVersionAnalyzer struct {
 }
 
 func init() {
-	registerVersionAnalyzer(&HelmVersionAnalyzer{})
+	utils.PanicError(registerVersionAnalyzer(&HelmVersionAnalyzer{}))
 }
 
 const argumentKeyRootDir = "root-dir"
