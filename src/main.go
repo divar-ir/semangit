@@ -6,11 +6,9 @@ import (
 	"semangit/src/gitRepoManager"
 	"semangit/src/utils"
 	"semangit/src/versionAnalyzers"
-	"semangit/src/versionComparers"
 )
 
 type runner struct {
-	versionComparer versionComparers.VersionComparer
 	versionAnalyzer versionAnalyzers.VersionAnalyzer
 }
 
@@ -28,12 +26,10 @@ func (r runner) run() {
 	toVersion := utils.GetResultOrPanicError(r.versionAnalyzer.ReadVersion(c.GetRepoDir(), c.GetCurrentVersionAnalyzerArgumentValues()))
 
 	fmt.Printf("TODO: Compare versions! From Version: %s To Version: %s\n", fromVersion, toVersion)
-	fmt.Printf("Compare result: %d\n", r.versionComparer.Compare(fromVersion, toVersion))
+	fmt.Printf("Compare result: %d\n", r.versionAnalyzer.CompareVersions(fromVersion, toVersion))
 }
 
 func main() {
-	r := runner{
-		versionComparer: versionComparers.SemanticVersionComparer{},
-	}
+	r := runner{}
 	r.run()
 }
