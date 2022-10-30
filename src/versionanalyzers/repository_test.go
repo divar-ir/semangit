@@ -1,4 +1,4 @@
-package versionAnalyzers
+package versionanalyzers
 
 import (
 	"github.com/stretchr/testify/assert"

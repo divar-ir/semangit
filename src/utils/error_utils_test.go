@@ -2,7 +2,6 @@ package utils
 
 import (
 	"errors"
-	"semangit/src/testUtils"
 	"testing"
 )
 
@@ -11,7 +10,7 @@ func TestPanicError(t *testing.T) {
 		returnError := func() error {
 			return errors.New("error")
 		}
-		testUtils.AssertPanics(t, func() {
+		AssertPanics(t, func() {
 			PanicError(returnError())
 		})
 	})
@@ -28,7 +27,7 @@ func TestGetResultOrPanicError(t *testing.T) {
 		returnError := func() (interface{}, error) {
 			return nil, errors.New("error")
 		}
-		testUtils.AssertPanics(t, func() {
+		AssertPanics(t, func() {
 			GetResultOrPanicError(returnError())
 		})
 	})
