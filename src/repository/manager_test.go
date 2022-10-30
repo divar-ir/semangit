@@ -1,4 +1,4 @@
-package gitRepoManager
+package repository
 
 import (
 	"github.com/stretchr/testify/assert"

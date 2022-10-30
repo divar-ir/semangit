@@ -1,4 +1,4 @@
-package versionAnalyzers
+package versionanalyzers
 
 import "fmt"
 
