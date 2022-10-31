@@ -2,7 +2,7 @@ package cli
 
 import (
 	"flag"
-	"semangit/src/repository"
+	"semangit/src/gitrepo"
 	"semangit/src/versionanalyzers"
 )
 
@@ -16,8 +16,8 @@ type cli struct {
 
 func RunNewCli() cli {
 	c := cli{
-		fromRevision:                   repository.RevisionNone,
-		toRevision:                     repository.RevisionNone,
+		fromRevision:                   gitrepo.RevisionNone,
+		toRevision:                     gitrepo.RevisionNone,
 		versionAnalyzersArgumentValues: make(map[string]*versionanalyzers.ArgumentValues),
 	}
 	c.parseFlags()
@@ -47,13 +47,13 @@ func (c *cli) GetCurrentVersionAnalyzerArgumentValues() *versionanalyzers.Argume
 
 func (c *cli) parseFlags() {
 	flag.StringVar(&c.repoDir, "d", ".", "Repo root path. Defaults to current directory.")
-	flag.StringVar(&c.fromRevision, "f", repository.RevisionNone, "From revision. A git reference to get version from.")
-	flag.StringVar(&c.toRevision, "t", repository.RevisionNone, "From revision. A git reference to get version from.")
+	flag.StringVar(&c.fromRevision, "f", gitrepo.RevisionNone, "From revision. A git reference to get version from.")
+	flag.StringVar(&c.toRevision, "t", gitrepo.RevisionNone, "From revision. A git reference to get version from.")
 	flag.StringVar(&c.versionAnalyzerName, "r", versionanalyzers.VersionAnalyzerNameHelm, "Version analyzer. Defaults to 'helm'.")
 	c.defineVersionAnalyzersFlags()
 	flag.Parse()
 
-	if c.GetToRevision() == repository.RevisionNone {
+	if c.GetToRevision() == gitrepo.RevisionNone {
 		panic("Provide TO revision (-t) to compare the version according to it.")
 	}
 }

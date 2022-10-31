@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"semangit/src/cli"
-	"semangit/src/repository"
+	"semangit/src/gitrepo"
 	"semangit/src/utils"
 	"semangit/src/versionanalyzers"
 )
@@ -15,9 +15,9 @@ type runner struct {
 func (r runner) run() {
 	c := cli.RunNewCli()
 	fmt.Println("Repo: " + c.GetRepoDir())
-	repoManager := repository.NewGitRepoManger(c.GetRepoDir())
+	repoManager := gitrepo.NewGitRepoManger(c.GetRepoDir())
 	r.versionAnalyzer = versionanalyzers.GetVersionAnalyzer(c.GetVersionAnalyzerName())
-	if c.GetFromRevision() != repository.RevisionNone {
+	if c.GetFromRevision() != gitrepo.RevisionNone {
 		repoManager.Checkout(c.GetFromRevision())
 	}
 	// TODO: Check if r.versionAnalyzer.ChangeNeedsVersionUpdate
