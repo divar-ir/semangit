@@ -1,4 +1,4 @@
-package versionAnalyzers
+package versionanalyzers
 
 import "golang.org/x/mod/semver"
 
