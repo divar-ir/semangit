@@ -1,26 +1,28 @@
-package versionanalyzers
+package helm
 
 import (
 	"gopkg.in/yaml.v3"
 	"os"
 	"path/filepath"
-	"semangit/src/utils"
+	"semangit/internal/utils"
+	"semangit/internal/versionanalyzers"
+	"semangit/internal/versionanalyzers/base"
 )
 import "strings"
 
 type HelmVersionAnalyzer struct {
-	versionAnalyzer
-}
-
-func init() {
-	utils.PanicError(registerVersionAnalyzer(&HelmVersionAnalyzer{}))
+	base.BaseAnalyzer
 }
 
 const argumentKeyRootDir = "root-dir"
 const VersionAnalyzerNameHelm = "helm"
 
-func (a *HelmVersionAnalyzer) GetExtraArgumentDefinitions() []ArgumentDefinition {
-	return []ArgumentDefinition{
+func New() *HelmVersionAnalyzer {
+	return &HelmVersionAnalyzer{}
+}
+
+func (a *HelmVersionAnalyzer) GetExtraArgumentDefinitions() []versionanalyzers.ArgumentDefinition {
+	return []versionanalyzers.ArgumentDefinition{
 		{
 			Name:         argumentKeyRootDir,
 			DefaultValue: ".",
@@ -29,9 +31,9 @@ func (a *HelmVersionAnalyzer) GetExtraArgumentDefinitions() []ArgumentDefinition
 	}
 }
 
-func (a *HelmVersionAnalyzer) ChangeNeedsVersionUpdate(changedFilesPaths []string, extraArgs *ArgumentValues) bool {
+func (a *HelmVersionAnalyzer) ChangeNeedsVersionUpdate(changedFilesPaths []string, extraArgs *versionanalyzers.ArgumentValues) bool {
 	helmRootDir := *(*extraArgs)[argumentKeyRootDir]
-	helmRootDir = utils.GetResultOrPanicError(filepath.Abs(helmRootDir))
+	helmRootDir = utils.GetResultOrPanic(filepath.Abs(helmRootDir))
 	helmTemplatesRootDir := filepath.Join(helmRootDir, "templates")
 	for _, path := range changedFilesPaths {
 		if strings.HasPrefix(path, helmTemplatesRootDir) {
@@ -45,7 +47,7 @@ type helmChart struct {
 	Version string `yaml:"version"`
 }
 
-func (a *HelmVersionAnalyzer) ReadVersion(projectRootDir string, extraArgs *ArgumentValues) (string, error) {
+func (a *HelmVersionAnalyzer) ReadVersion(projectRootDir string, extraArgs *versionanalyzers.ArgumentValues) (string, error) {
 	rootDir := *(*extraArgs)[argumentKeyRootDir]
 	chartFileContent, err := os.ReadFile(filepath.Join(rootDir, "Chart.yaml"))
 	if err != nil {

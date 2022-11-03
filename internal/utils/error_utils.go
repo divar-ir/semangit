@@ -1,6 +1,6 @@
 package utils
 
-func GetResultOrPanicError[TResult interface{}](result TResult, error error) TResult {
+func GetResultOrPanic[TResult interface{}](result TResult, error error) TResult {
 	if error != nil {
 		panic(error)
 	}

@@ -28,13 +28,13 @@ func TestGetResultOrPanicError(t *testing.T) {
 			return nil, errors.New("error")
 		}
 		AssertPanics(t, func() {
-			GetResultOrPanicError(returnError())
+			GetResultOrPanic(returnError())
 		})
 	})
 	t.Run("Should return result if no error occurs", func(t *testing.T) {
 		returnResult := func() (string, error) {
 			return "result", nil
 		}
-		GetResultOrPanicError(returnResult())
+		GetResultOrPanic(returnResult())
 	})
 }

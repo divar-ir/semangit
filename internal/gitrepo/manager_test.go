@@ -6,7 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
-	"semangit/src/utils"
+	"semangit/internal/utils"
 	"strings"
 	"testing"
 )
@@ -25,7 +25,7 @@ func TestGitRepoManager(t *testing.T) {
 }
 
 func (s *TestSuite) SetupTest() {
-	s.repoDir = utils.GetResultOrPanicError(os.MkdirTemp("", "sample-git-repo"))
+	s.repoDir = utils.GetResultOrPanic(os.MkdirTemp("", "sample-git-repo"))
 	s.runGitCommand("init")
 	s.runGitCommand("config", "user.email", "test@test.com")
 	s.runGitCommand("config", "user.name", "Test")
@@ -43,7 +43,7 @@ func (s *TestSuite) runGitCommand(args ...string) string {
 
 func (s *TestSuite) runCommand(name string, args ...string) string {
 	cmd := exec.Command(name, args...)
-	output := utils.GetResultOrPanicError(cmd.CombinedOutput())
+	output := utils.GetResultOrPanic(cmd.CombinedOutput())
 	return string(output)
 }
 

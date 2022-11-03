@@ -3,6 +3,8 @@ package versionanalyzers
 import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+	"semangit/internal/versionanalyzers/base"
+	"semangit/internal/versionanalyzers/helm"
 	"testing"
 )
 
@@ -15,12 +17,12 @@ func TestRepository(t *testing.T) {
 }
 
 func (s *RepositoryTestSuite) TestRepositoryContainsHelmVersionAnalyzer() {
-	analyzer := GetVersionAnalyzer(VersionAnalyzerNameHelm)
-	assert.IsType(s.T(), &HelmVersionAnalyzer{}, analyzer)
+	analyzer := GetVersionAnalyzer(helm.VersionAnalyzerNameHelm)
+	assert.IsType(s.T(), &helm.HelmVersionAnalyzer{}, analyzer)
 }
 
 type fakeAnalyzer struct {
-	versionAnalyzer
+	base.BaseAnalyzer
 }
 
 func (a *fakeAnalyzer) GetName() string {
@@ -29,10 +31,10 @@ func (a *fakeAnalyzer) GetName() string {
 
 func (s *RepositoryTestSuite) TestCanRegisterNewVersionAnalyzer() {
 	previousAnalyzersCount := len(GetAllAnalyzers())
-	registerVersionAnalyzer(&fakeAnalyzer{})
+	RegisterVersionAnalyzer(&fakeAnalyzer{})
 	assert.Equal(s.T(), previousAnalyzersCount+1, len(GetAllAnalyzers()))
 }
 
 func (s *RepositoryTestSuite) TestCanNotRegisterVersionAnalyzerWithRepetitiveName() {
-	assert.Error(s.T(), registerVersionAnalyzer(&HelmVersionAnalyzer{}))
+	assert.Error(s.T(), RegisterVersionAnalyzer(&helm.HelmVersionAnalyzer{}))
 }

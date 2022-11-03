@@ -1,10 +1,11 @@
-package versionanalyzers
+package helm
 
 import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"os"
-	"semangit/src/utils"
+	"semangit/internal/utils"
+	"semangit/internal/versionanalyzers"
 	"testing"
 )
 
@@ -54,7 +55,7 @@ func (s *HelmVersionAnalyzerTestSuite) TearDownTest() {
 
 func (s *HelmVersionAnalyzerTestSuite) TestCanReadChartVersion() {
 	helmRootDir := "."
-	version := utils.GetResultOrPanicError(s.helmVersionAnalyzer.ReadVersion(".", &ArgumentValues{
+	version := utils.GetResultOrPanic(s.helmVersionAnalyzer.ReadVersion(".", &versionanalyzers.ArgumentValues{
 		argumentKeyRootDir: &helmRootDir,
 	}))
 	assert.Equal(s.T(), "1.2.3", version)
@@ -62,7 +63,7 @@ func (s *HelmVersionAnalyzerTestSuite) TestCanReadChartVersion() {
 
 func (s *HelmVersionAnalyzerTestSuite) TestVersionUpdateIsNotNeededWhenNoChangeIsMade() {
 	helmRootDir := "."
-	needsVersionUpdate := s.helmVersionAnalyzer.ChangeNeedsVersionUpdate([]string{}, &ArgumentValues{
+	needsVersionUpdate := s.helmVersionAnalyzer.ChangeNeedsVersionUpdate([]string{}, &versionanalyzers.ArgumentValues{
 		argumentKeyRootDir: &helmRootDir,
 	})
 	assert.False(s.T(), needsVersionUpdate)
@@ -72,7 +73,7 @@ func (s *HelmVersionAnalyzerTestSuite) TestVersionUpdateIsNotNeededWhenChangesAr
 	helmRootDir := "/some/project/helm/"
 	needsVersionUpdate := s.helmVersionAnalyzer.ChangeNeedsVersionUpdate([]string{
 		"/some/project/non-helm.txt",
-	}, &ArgumentValues{
+	}, &versionanalyzers.ArgumentValues{
 		argumentKeyRootDir: &helmRootDir,
 	})
 	assert.False(s.T(), needsVersionUpdate)
@@ -82,7 +83,7 @@ func (s *HelmVersionAnalyzerTestSuite) TestVersionUpdateIsNotNeededWhenChangesAr
 	helmRootDir := "/some/project/helm/"
 	needsVersionUpdate := s.helmVersionAnalyzer.ChangeNeedsVersionUpdate([]string{
 		"/some/project/helm/Chart.yaml",
-	}, &ArgumentValues{
+	}, &versionanalyzers.ArgumentValues{
 		argumentKeyRootDir: &helmRootDir,
 	})
 	assert.False(s.T(), needsVersionUpdate)
@@ -93,7 +94,7 @@ func (s *HelmVersionAnalyzerTestSuite) TestVersionUpdateIsNeededWhenSomeChangesA
 	needsVersionUpdate := s.helmVersionAnalyzer.ChangeNeedsVersionUpdate([]string{
 		"/some/project/helm/templates/deployment.yaml",
 		"/some/project/non-helm.txt",
-	}, &ArgumentValues{
+	}, &versionanalyzers.ArgumentValues{
 		argumentKeyRootDir: &helmRootDir,
 	})
 	assert.True(s.T(), needsVersionUpdate)

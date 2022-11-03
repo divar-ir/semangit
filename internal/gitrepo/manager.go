@@ -3,7 +3,7 @@ package gitrepo
 import (
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
-	"semangit/src/utils"
+	"semangit/internal/utils"
 )
 
 const RevisionNone = ""
@@ -13,12 +13,12 @@ type gitRepoManager struct {
 }
 
 func NewGitRepoManger(repoDir string) gitRepoManager {
-	repo := utils.GetResultOrPanicError(git.PlainOpen(repoDir))
+	repo := utils.GetResultOrPanic(git.PlainOpen(repoDir))
 	return gitRepoManager{repo}
 }
 
 func (m *gitRepoManager) Checkout(refName string) {
-	worktree := utils.GetResultOrPanicError(m.repo.Worktree())
+	worktree := utils.GetResultOrPanic(m.repo.Worktree())
 	utils.PanicError(worktree.Checkout(&git.CheckoutOptions{
 		Branch: plumbing.ReferenceName("refs/heads/" + refName),
 		Force:  true,
@@ -27,11 +27,11 @@ func (m *gitRepoManager) Checkout(refName string) {
 
 // ListChangedFiles Returns the list of filenames that are changed between the two given git revisions.
 func (m *gitRepoManager) ListChangedFiles(fromRevision string, toRevision string) []string {
-	fromHash := utils.GetResultOrPanicError(m.repo.ResolveRevision(plumbing.Revision(fromRevision)))
-	fromCommit := utils.GetResultOrPanicError(m.repo.CommitObject(*fromHash))
-	toHash := utils.GetResultOrPanicError(m.repo.ResolveRevision(plumbing.Revision(toRevision)))
-	toCommit := utils.GetResultOrPanicError(m.repo.CommitObject(*toHash))
-	patch := utils.GetResultOrPanicError(fromCommit.Patch(toCommit))
+	fromHash := utils.GetResultOrPanic(m.repo.ResolveRevision(plumbing.Revision(fromRevision)))
+	fromCommit := utils.GetResultOrPanic(m.repo.CommitObject(*fromHash))
+	toHash := utils.GetResultOrPanic(m.repo.ResolveRevision(plumbing.Revision(toRevision)))
+	toCommit := utils.GetResultOrPanic(m.repo.CommitObject(*toHash))
+	patch := utils.GetResultOrPanic(fromCommit.Patch(toCommit))
 	filePathsSet := make(map[string]bool)
 	for _, filePatch := range patch.FilePatches() {
 		fromFile, toFile := filePatch.Files()
