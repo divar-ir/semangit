@@ -38,7 +38,9 @@ func (m *gitRepoManager) ListChangedFiles(fromRevision string, toRevision string
 		if fromFile != nil {
 			filePathsSet[fromFile.Path()] = true
 		}
-		filePathsSet[toFile.Path()] = true
+		if toFile != nil {
+			filePathsSet[toFile.Path()] = true
+		}
 	}
 
 	changedFilePaths := make([]string, len(filePathsSet))
