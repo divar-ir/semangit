@@ -25,6 +25,7 @@ func (m *gitRepoManager) Checkout(refName string) {
 	}))
 }
 
+// ListChangedFiles Returns the list of filenames that are changed between the two given git revisions.
 func (m *gitRepoManager) ListChangedFiles(fromRevision string, toRevision string) []string {
 	fromHash := utils.GetResultOrPanicError(m.repo.ResolveRevision(plumbing.Revision(fromRevision)))
 	fromCommit := utils.GetResultOrPanicError(m.repo.CommitObject(*fromHash))
