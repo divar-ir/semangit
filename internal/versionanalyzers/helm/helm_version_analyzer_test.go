@@ -56,7 +56,7 @@ func (s *HelmVersionAnalyzerTestSuite) TearDownTest() {
 func (s *HelmVersionAnalyzerTestSuite) TestCanReadChartVersion() {
 	helmRootDir := "."
 	version := utils.GetResultOrPanic(s.helmVersionAnalyzer.ReadVersion(".", &versionanalyzers.ArgumentValues{
-		argumentKeyRootDir: &helmRootDir,
+		ArgumentKeyRootDir: &helmRootDir,
 	}))
 	assert.Equal(s.T(), "1.2.3", version)
 }
@@ -64,7 +64,7 @@ func (s *HelmVersionAnalyzerTestSuite) TestCanReadChartVersion() {
 func (s *HelmVersionAnalyzerTestSuite) TestVersionUpdateIsNotNeededWhenNoChangeIsMade() {
 	helmRootDir := "."
 	needsVersionUpdate := s.helmVersionAnalyzer.ChangeNeedsVersionUpdate([]string{}, &versionanalyzers.ArgumentValues{
-		argumentKeyRootDir: &helmRootDir,
+		ArgumentKeyRootDir: &helmRootDir,
 	})
 	assert.False(s.T(), needsVersionUpdate)
 }
@@ -74,7 +74,7 @@ func (s *HelmVersionAnalyzerTestSuite) TestVersionUpdateIsNotNeededWhenChangesAr
 	needsVersionUpdate := s.helmVersionAnalyzer.ChangeNeedsVersionUpdate([]string{
 		"/some/project/non-helm.txt",
 	}, &versionanalyzers.ArgumentValues{
-		argumentKeyRootDir: &helmRootDir,
+		ArgumentKeyRootDir: &helmRootDir,
 	})
 	assert.False(s.T(), needsVersionUpdate)
 }
@@ -84,7 +84,7 @@ func (s *HelmVersionAnalyzerTestSuite) TestVersionUpdateIsNotNeededWhenChangesAr
 	needsVersionUpdate := s.helmVersionAnalyzer.ChangeNeedsVersionUpdate([]string{
 		"/some/project/helm/Chart.yaml",
 	}, &versionanalyzers.ArgumentValues{
-		argumentKeyRootDir: &helmRootDir,
+		ArgumentKeyRootDir: &helmRootDir,
 	})
 	assert.False(s.T(), needsVersionUpdate)
 }
@@ -95,7 +95,7 @@ func (s *HelmVersionAnalyzerTestSuite) TestVersionUpdateIsNeededWhenSomeChangesA
 		"/some/project/helm/templates/deployment.yaml",
 		"/some/project/non-helm.txt",
 	}, &versionanalyzers.ArgumentValues{
-		argumentKeyRootDir: &helmRootDir,
+		ArgumentKeyRootDir: &helmRootDir,
 	})
 	assert.True(s.T(), needsVersionUpdate)
 }
