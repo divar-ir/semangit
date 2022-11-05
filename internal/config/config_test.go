@@ -4,9 +4,9 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/suite"
 	"os"
+	"semangit/internal/plugins/helm"
+	"semangit/internal/plugins/versionanalyzer"
 	"semangit/internal/utils"
-	"semangit/internal/versionanalyzers"
-	"semangit/internal/versionanalyzers/helm"
 	"testing"
 )
 
@@ -21,12 +21,14 @@ func TestConfig(t *testing.T) {
 
 func (s *ConfigTestSuite) SetupSuite() {
 	s.cmd = &cobra.Command{}
-	s.NoError(versionanalyzers.RegisterVersionAnalyzer(helm.New()))
+	s.NoError(versionanalyzer.RegisterVersionAnalyzer(helm.New()))
 }
 
 func (s *ConfigTestSuite) TearDownTest() {
 	s.cmd.ResetFlags()
-	utils.PanicError(os.Remove("./config.env"))
+	if _, err := os.Stat("./config.env"); err == nil {
+		utils.PanicError(os.Remove("./config.env"))
+	}
 }
 
 func (s *ConfigTestSuite) AddRequiredFlags() {

@@ -5,13 +5,13 @@ import (
 	"github.com/spf13/cobra"
 	"semangit/internal/config"
 	"semangit/internal/gitrepo"
+	"semangit/internal/plugins/versionanalyzer"
 	"semangit/internal/utils"
-	"semangit/internal/versionanalyzers"
 )
 
 func serveSemanGit(cmd *cobra.Command, args []string) error {
 	conf := utils.GetResultOrPanic(config.LoadConfig(cmd))
-	versionAnalyzer := versionanalyzers.GetVersionAnalyzer(conf.ActiveVersionAnalyzerName)
+	versionAnalyzer := versionanalyzer.GetVersionAnalyzer(conf.ActiveVersionAnalyzerName)
 	repoManager := gitrepo.NewGitRepoManger(conf.RepoDir)
 
 	if conf.SrcRevision != gitrepo.RevisionNone {

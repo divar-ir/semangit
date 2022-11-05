@@ -1,6 +1,8 @@
-package versionanalyzers
+package versionanalyzer
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func GetVersionAnalyzer(name string) VersionAnalyzer {
 	for _, analyzer := range GetAllAnalyzers() {

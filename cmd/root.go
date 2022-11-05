@@ -9,9 +9,9 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
+	"semangit/internal/plugins/helm"
+	"semangit/internal/plugins/versionanalyzer"
 	"semangit/internal/utils"
-	"semangit/internal/versionanalyzers"
-	"semangit/internal/versionanalyzers/helm"
 )
 
 var cfgFile string
@@ -32,7 +32,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	// Register version analyzers
-	utils.PanicError(versionanalyzers.RegisterVersionAnalyzer(helm.New()))
+	utils.PanicError(versionanalyzer.RegisterVersionAnalyzer(helm.New()))
 
 	rootCmd.Flags().StringP(
 		"repo-dir",
@@ -93,7 +93,7 @@ func Execute() {
 }
 
 func registerVersionAnalyzersArgumentsFlags(cmd *cobra.Command) {
-	for _, versionAnalyzer := range versionanalyzers.GetAllAnalyzers() {
+	for _, versionAnalyzer := range versionanalyzer.GetAllAnalyzers() {
 		argNamePrefix := versionAnalyzer.GetName() + "-"
 		for _, argDefinition := range versionAnalyzer.GetExtraArgumentDefinitions() {
 			cmd.Flags().String(argNamePrefix+argDefinition.Name, argDefinition.DefaultValue, argDefinition.Description)

@@ -1,10 +1,10 @@
-package versionanalyzers
+package versionanalyzer
 
 import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"semangit/internal/versionanalyzers/base"
-	"semangit/internal/versionanalyzers/helm"
+	"semangit/internal/plugins/base"
+	"semangit/internal/plugins/helm"
 	"testing"
 )
 
@@ -36,5 +36,6 @@ func (s *RepositoryTestSuite) TestCanRegisterNewVersionAnalyzer() {
 }
 
 func (s *RepositoryTestSuite) TestCanNotRegisterVersionAnalyzerWithRepetitiveName() {
-	assert.Error(s.T(), RegisterVersionAnalyzer(&helm.HelmVersionAnalyzer{}))
+	s.NoError(RegisterVersionAnalyzer(helm.New()))
+	s.Error(RegisterVersionAnalyzer(helm.New()))
 }
