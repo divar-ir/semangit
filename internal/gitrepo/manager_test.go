@@ -1,7 +1,6 @@
 package gitrepo
 
 import (
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"os"
 	"os/exec"
@@ -54,7 +53,7 @@ func (s *TestSuite) TearDownTest() {
 func (s *TestSuite) assertBranch(expectedBranch string) {
 	currentBranch := s.runGitCommand("rev-parse", "--abbrev-ref", "HEAD")
 	currentBranch = strings.Trim(currentBranch, "\n")
-	assert.Equal(s.T(), expectedBranch, currentBranch)
+	s.Equal(expectedBranch, currentBranch)
 }
 
 func (s *TestSuite) TestCanCheckoutToAnotherBranch() {

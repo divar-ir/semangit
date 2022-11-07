@@ -5,28 +5,27 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"semangit/internal/plugins"
-	"semangit/internal/plugins/base"
-	"semangit/internal/plugins/versionanalyzer"
+	"semangit/internal/versionanalyzers"
+	"semangit/internal/versionanalyzers/repo"
 	"strings"
 )
 
 const RevisionNone = ""
 
 type Config struct {
-	RepoDir                   string                     `json:"repo_dir,omitempty"`
-	SrcRevision               string                     `json:"src_revision,omitempty"`
-	DestRevision              string                     `json:"dest_revision,omitempty"`
-	ActiveVersionAnalyzerName string                     `json:"active_version_analyzer_name,omitempty""`
-	VersionAnalyzers          map[string]*plugins.Config `json:"version_analyzers,omitempty"`
+	RepoDir                    string                              `json:"repo_dir,omitempty"`
+	SrcRevision                string                              `json:"src_revision,omitempty"`
+	DestRevision               string                              `json:"dest_revision,omitempty"`
+	CurrentVersionAnalyzerName string                              `json:"active_version_analyzer_name,omitempty""`
+	VersionAnalyzers           map[string]*versionanalyzers.Config `json:"version_analyzers,omitempty"`
 }
 
 func LoadConfig(cmd *cobra.Command) (*Config, error) {
 	viper.SetDefault("RepoDir", ".")
 	viper.SetDefault("SrcRevision", RevisionNone)
 	viper.SetDefault("DestRevision", RevisionNone)
-	viper.SetDefault("ActiveVersionAnalyzerName", "helm")
-	viper.SetDefault("VersionAnalyzers", make(map[string]*plugins.Config))
+	viper.SetDefault("CurrentVersionAnalyzerName", "helm")
+	viper.SetDefault("VersionAnalyzers", make(map[string]*versionanalyzers.Config))
 
 	// Read Config from ENV
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
@@ -45,7 +44,7 @@ func LoadConfig(cmd *cobra.Command) (*Config, error) {
 		return nil, errors.WithStack(err)
 	}
 
-	if err := viper.BindPFlag("ActiveVersionAnalyzerName", cmd.Flags().Lookup("version-analyzer-name")); err != nil {
+	if err := viper.BindPFlag("CurrentVersionAnalyzerName", cmd.Flags().Lookup("version-analyzer-name")); err != nil {
 		return nil, errors.WithStack(err)
 	}
 
@@ -71,11 +70,11 @@ func LoadConfig(cmd *cobra.Command) (*Config, error) {
 }
 
 func extractVersionAnalyzersArguments(cmd *cobra.Command) {
-	versionAnalyzersConfigs := make(map[string]*plugins.Config)
-	for _, versionAnalyzer := range versionanalyzer.GetAllAnalyzers() {
-		conf := plugins.Config{
+	versionAnalyzersConfigs := make(map[string]*versionanalyzers.Config)
+	for _, versionAnalyzer := range repo.GetAllAnalyzers() {
+		conf := versionanalyzers.Config{
 			Name:           versionAnalyzer.GetName(),
-			ArgumentValues: make(map[string]*base.ArgumentValue),
+			ArgumentValues: make(map[string]*versionanalyzers.ArgumentValue),
 		}
 
 		argNamePrefix := versionAnalyzer.GetName() + "-"
@@ -93,6 +92,6 @@ func extractVersionAnalyzersArguments(cmd *cobra.Command) {
 	viper.Set("VersionAnalyzers", versionAnalyzersConfigs)
 }
 
-func (c *Config) GetCurrentVersionAnalyzerArgumentValues() *base.ArgumentValues {
-	return &c.VersionAnalyzers[c.ActiveVersionAnalyzerName].ArgumentValues
+func (c *Config) GetCurrentVersionAnalyzerArgumentValues() *versionanalyzers.ArgumentValues {
+	return &c.VersionAnalyzers[c.CurrentVersionAnalyzerName].ArgumentValues
 }

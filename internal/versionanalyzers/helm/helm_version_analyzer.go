@@ -4,8 +4,10 @@ import (
 	"gopkg.in/yaml.v3"
 	"os"
 	"path/filepath"
-	"semangit/internal/plugins/base"
 	"semangit/internal/utils"
+	"semangit/internal/versionanalyzers"
+	"semangit/internal/versionanalyzers/base"
+	"semangit/internal/versionanalyzers/repo"
 )
 import "strings"
 
@@ -20,8 +22,12 @@ func New() *HelmVersionAnalyzer {
 	return &HelmVersionAnalyzer{}
 }
 
-func (a *HelmVersionAnalyzer) GetExtraArgumentDefinitions() []base.ArgumentDefinition {
-	return []base.ArgumentDefinition{
+func init() {
+	utils.PanicError(repo.RegisterVersionAnalyzer(New()))
+}
+
+func (a *HelmVersionAnalyzer) GetExtraArgumentDefinitions() []versionanalyzers.ArgumentDefinition {
+	return []versionanalyzers.ArgumentDefinition{
 		{
 			Name:         ArgumentKeyRootDir,
 			DefaultValue: ".",
@@ -30,7 +36,7 @@ func (a *HelmVersionAnalyzer) GetExtraArgumentDefinitions() []base.ArgumentDefin
 	}
 }
 
-func (a *HelmVersionAnalyzer) ChangeNeedsVersionUpdate(changedFilesPaths []string, extraArgs *base.ArgumentValues) bool {
+func (a *HelmVersionAnalyzer) ChangeNeedsVersionUpdate(changedFilesPaths []string, extraArgs *versionanalyzers.ArgumentValues) bool {
 	helmRootDir := *(*extraArgs)[ArgumentKeyRootDir]
 	helmRootDir = utils.GetResultOrPanic(filepath.Abs(helmRootDir))
 	helmTemplatesRootDir := filepath.Join(helmRootDir, "templates")
@@ -46,7 +52,7 @@ type helmChart struct {
 	Version string `yaml:"version"`
 }
 
-func (a *HelmVersionAnalyzer) ReadVersion(projectRootDir string, extraArgs *base.ArgumentValues) (string, error) {
+func (a *HelmVersionAnalyzer) ReadVersion(projectRootDir string, extraArgs *versionanalyzers.ArgumentValues) (string, error) {
 	rootDir := *(*extraArgs)[ArgumentKeyRootDir]
 	chartFileContent, err := os.ReadFile(filepath.Join(rootDir, "Chart.yaml"))
 	if err != nil {

@@ -1,4 +1,4 @@
-package base
+package versionanalyzers
 
 type ArgumentName = string
 type ArgumentValue = string
