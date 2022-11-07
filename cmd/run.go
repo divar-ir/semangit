@@ -9,7 +9,7 @@ import (
 	"semangit/internal/versionanalyzers/repo"
 )
 
-func serveSemangit(cmd *cobra.Command, args []string) error {
+func runSemangit(cmd *cobra.Command, args []string) error {
 	conf := utils.GetResultOrPanic(config.LoadConfig(cmd))
 	versionAnalyzer := repo.GetVersionAnalyzer(conf.CurrentVersionAnalyzerName)
 	repoManager := gitrepo.NewGitRepoManger(conf.RepoDir)

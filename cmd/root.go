@@ -9,12 +9,12 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "serve",
-	Short: "Serve semangit",
+	Use:   "run",
+	Short: "Run semangit",
 	Long:  `A simple tool to force version update in CI.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := serveSemangit(cmd, args); err != nil {
-			logrus.WithError(err).Fatal("Failed to serve.")
+		if err := runSemangit(cmd, args); err != nil {
+			logrus.WithError(err).Fatal("Failed to run.")
 		}
 	},
 }
@@ -30,13 +30,13 @@ func InitializeFlags() {
 		"src-rev",
 		"s",
 		"",
-		"The source revision",
+		"The source git revision",
 	)
 	rootCmd.Flags().StringP(
 		"dest-rev",
 		"d",
 		"",
-		"The destination revision",
+		"The destination git revision",
 	)
 	rootCmd.Flags().StringP(
 		"version-analyzer-name",

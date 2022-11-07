@@ -13,11 +13,11 @@ import (
 const RevisionNone = ""
 
 type Config struct {
-	RepoDir                    string                              `json:"repo_dir,omitempty"`
-	SrcRevision                string                              `json:"src_revision,omitempty"`
-	DestRevision               string                              `json:"dest_revision,omitempty"`
-	CurrentVersionAnalyzerName string                              `json:"active_version_analyzer_name,omitempty""`
-	VersionAnalyzers           map[string]*versionanalyzers.Config `json:"version_analyzers,omitempty"`
+	RepoDir                    string                                      `json:"repo_dir,omitempty"`
+	SrcRevision                string                                      `json:"src_revision,omitempty"`
+	DestRevision               string                                      `json:"dest_revision,omitempty"`
+	CurrentVersionAnalyzerName string                                      `json:"active_version_analyzer_name,omitempty""`
+	VersionAnalyzers           map[string]*versionanalyzers.ArgumentValues `json:"version_analyzers,omitempty"`
 }
 
 func LoadConfig(cmd *cobra.Command) (*Config, error) {
@@ -25,7 +25,7 @@ func LoadConfig(cmd *cobra.Command) (*Config, error) {
 	viper.SetDefault("SrcRevision", RevisionNone)
 	viper.SetDefault("DestRevision", RevisionNone)
 	viper.SetDefault("CurrentVersionAnalyzerName", "helm")
-	viper.SetDefault("VersionAnalyzers", make(map[string]*versionanalyzers.Config))
+	viper.SetDefault("VersionAnalyzers", make(map[string]*versionanalyzers.ArgumentValues))
 
 	// Read Config from ENV
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
@@ -70,12 +70,9 @@ func LoadConfig(cmd *cobra.Command) (*Config, error) {
 }
 
 func extractVersionAnalyzersArguments(cmd *cobra.Command) {
-	versionAnalyzersConfigs := make(map[string]*versionanalyzers.Config)
+	versionAnalyzersConfigs := make(map[string]*versionanalyzers.ArgumentValues)
 	for _, versionAnalyzer := range repo.GetAllAnalyzers() {
-		conf := versionanalyzers.Config{
-			Name:           versionAnalyzer.GetName(),
-			ArgumentValues: make(map[string]*versionanalyzers.ArgumentValue),
-		}
+		conf := make(versionanalyzers.ArgumentValues)
 
 		argNamePrefix := versionAnalyzer.GetName() + "-"
 		for _, argDefinition := range versionAnalyzer.GetExtraArgumentDefinitions() {
@@ -85,7 +82,7 @@ func extractVersionAnalyzersArguments(cmd *cobra.Command) {
 				_ = fmt.Errorf("couldn't add %v flag: %v", argNamePrefix+argDefinition.Name, err.Error())
 				continue
 			}
-			conf.ArgumentValues[argDefinition.Name] = &argValue
+			conf[argDefinition.Name] = &argValue
 		}
 		versionAnalyzersConfigs[versionAnalyzer.GetName()] = &conf
 	}
@@ -93,5 +90,5 @@ func extractVersionAnalyzersArguments(cmd *cobra.Command) {
 }
 
 func (c *Config) GetCurrentVersionAnalyzerArgumentValues() *versionanalyzers.ArgumentValues {
-	return &c.VersionAnalyzers[c.CurrentVersionAnalyzerName].ArgumentValues
+	return c.VersionAnalyzers[c.CurrentVersionAnalyzerName]
 }
