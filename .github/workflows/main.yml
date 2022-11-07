@@ -38,7 +38,7 @@ jobs:
         with:
           go-version: '1.19.2'
       - name: Build
-        run: go build -o semangit ./src
+        run: go build -o semangit .
       - name: Smoke test
         run: ./semangit --help
       - uses: actions/upload-artifact@v3
