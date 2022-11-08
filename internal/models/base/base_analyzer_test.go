@@ -15,25 +15,34 @@ func TestBaseAnalyzerTestSuite(t *testing.T) {
 }
 
 func (s *BaseAnalyzerTestSuite) SetupSuite() {
-	s.baseAnalyzer = New()
+	s.baseAnalyzer = newBaseAnalyzer()
 }
 
-func (s *BaseAnalyzerTestSuite) TestCompareVersionReturnsZero() {
+func (s *BaseAnalyzerTestSuite) TestZeroIsReturnedForEqualVersions() {
 	s.Equal(s.baseAnalyzer.CompareVersions("2.1.1", "2.1.1"), 0)
 	s.Equal(s.baseAnalyzer.CompareVersions("2.1.13", "2.1.13"), 0)
 	s.Equal(s.baseAnalyzer.CompareVersions("2.14.1", "2.14.1"), 0)
 	s.Equal(s.baseAnalyzer.CompareVersions("21.1.1", "21.1.1"), 0)
-	s.Equal(s.baseAnalyzer.CompareVersions("v2.1.1", "v2.1.1"), 0)
 }
 
-func (s *BaseAnalyzerTestSuite) TestCompareVersionReturnsNegative() {
-	s.Equal(s.baseAnalyzer.CompareVersions("2.1.1", "2.1.12"), -1)
-	s.Equal(s.baseAnalyzer.CompareVersions("2.1.1", "2.4.1"), -1)
-	s.Equal(s.baseAnalyzer.CompareVersions("2.1.1", "3.1.1"), -1)
+func (s *BaseAnalyzerTestSuite) TestCanCompareVersionsWithPrefixV() {
+	s.Equal(s.baseAnalyzer.CompareVersions("v2.1.1", "2.1.1"), 0)
+	s.Equal(s.baseAnalyzer.CompareVersions("v2.1.1", "v2.11.1"), -1)
+	s.Equal(s.baseAnalyzer.CompareVersions("21.1.1", "v2.1.1"), 1)
+	s.Equal(s.baseAnalyzer.CompareVersions("v2.1.1", "v2.11.1"), -1)
 }
 
-func (s *BaseAnalyzerTestSuite) TestCompareVersionReturnsPositive() {
-	s.Equal(s.baseAnalyzer.CompareVersions("2.1.12", "2.1.1"), 1)
-	s.Equal(s.baseAnalyzer.CompareVersions("2.4.1", "2.1.1"), 1)
-	s.Equal(s.baseAnalyzer.CompareVersions("3.1.1", "2.1.1"), 1)
+func (s *BaseAnalyzerTestSuite) TestCanCompareMajorVersion() {
+	s.Equal(s.baseAnalyzer.CompareVersions("2.1.13", "21.1.13"), -1)
+	s.Equal(s.baseAnalyzer.CompareVersions("21.1.13", "2.1.13"), 1)
+}
+
+func (s *BaseAnalyzerTestSuite) TestCanCompareMinorVersion() {
+	s.Equal(s.baseAnalyzer.CompareVersions("2.1.13", "2.13.13"), -1)
+	s.Equal(s.baseAnalyzer.CompareVersions("2.13.13", "2.1.13"), 1)
+}
+
+func (s *BaseAnalyzerTestSuite) TestCanComparePatchVersion() {
+	s.Equal(s.baseAnalyzer.CompareVersions("2.1.13", "21.1.13"), -1)
+	s.Equal(s.baseAnalyzer.CompareVersions("21.1.13", "2.1.13"), 1)
 }
