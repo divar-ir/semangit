@@ -1,4 +1,4 @@
-package versionanalyzers
+package models
 
 type VersionAnalyzer interface {
 	GetName() string

@@ -2,7 +2,7 @@ package repo
 
 import (
 	"github.com/stretchr/testify/suite"
-	"semangit/internal/versionanalyzers/base"
+	"semangit/internal/models/base"
 	"testing"
 )
 

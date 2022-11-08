@@ -5,27 +5,27 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"semangit/internal/versionanalyzers"
-	"semangit/internal/versionanalyzers/repo"
+	"semangit/internal/models"
+	"semangit/internal/models/repo"
 	"strings"
 )
 
 const RevisionNone = ""
 
 type Config struct {
-	RepoDir                        string                                      `json:"repo_dir,omitempty"`
-	SrcRevision                    string                                      `json:"src_revision,omitempty"`
-	DestRevision                   string                                      `json:"dest_revision,omitempty"`
-	CurrentVersionAnalyzerName     string                                      `json:"active_version_analyzer_name,omitempty""`
-	VersionAnalyzersArgumentValues map[string]*versionanalyzers.ArgumentValues `json:"version_analyzers,omitempty"`
+	RepoDir                        string                            `json:"repo_dir,omitempty"`
+	OldRevision                    string                            `json:"old_revision,omitempty"`
+	NewRevision                    string                            `json:"new_revision,omitempty"`
+	CurrentVersionAnalyzerName     string                            `json:"active_version_analyzer_name,omitempty"`
+	VersionAnalyzersArgumentValues map[string]*models.ArgumentValues `json:"version_analyzers,omitempty"`
 }
 
 func LoadConfig(cmd *cobra.Command) (*Config, error) {
 	viper.SetDefault("RepoDir", ".")
-	viper.SetDefault("SrcRevision", RevisionNone)
-	viper.SetDefault("DestRevision", RevisionNone)
+	viper.SetDefault("OldRevision", RevisionNone)
+	viper.SetDefault("NewRevision", RevisionNone)
 	viper.SetDefault("CurrentVersionAnalyzerName", "helm")
-	viper.SetDefault("VersionAnalyzersArgumentValues", make(map[string]*versionanalyzers.ArgumentValues))
+	viper.SetDefault("VersionAnalyzersArgumentValues", make(map[string]*models.ArgumentValues))
 
 	// Read Config from ENV
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
@@ -36,11 +36,11 @@ func LoadConfig(cmd *cobra.Command) (*Config, error) {
 		return nil, errors.WithStack(err)
 	}
 
-	if err := viper.BindPFlag("SrcRevision", cmd.Flags().Lookup("src-rev")); err != nil {
+	if err := viper.BindPFlag("OldRevision", cmd.Flags().Lookup("old-rev")); err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	if err := viper.BindPFlag("DestRevision", cmd.Flags().Lookup("dest-rev")); err != nil {
+	if err := viper.BindPFlag("NewRevision", cmd.Flags().Lookup("new-rev")); err != nil {
 		return nil, errors.WithStack(err)
 	}
 
@@ -70,9 +70,9 @@ func LoadConfig(cmd *cobra.Command) (*Config, error) {
 }
 
 func extractVersionAnalyzersArguments(cmd *cobra.Command) {
-	versionAnalyzersConfigs := make(map[string]*versionanalyzers.ArgumentValues)
+	versionAnalyzersConfigs := make(map[string]*models.ArgumentValues)
 	for _, versionAnalyzer := range repo.GetAllAnalyzers() {
-		argValues := make(versionanalyzers.ArgumentValues)
+		argValues := make(models.ArgumentValues)
 
 		argNamePrefix := versionAnalyzer.GetName() + "-"
 		for _, argDefinition := range versionAnalyzer.GetExtraArgumentDefinitions() {
@@ -89,6 +89,6 @@ func extractVersionAnalyzersArguments(cmd *cobra.Command) {
 	viper.Set("VersionAnalyzersArgumentValues", versionAnalyzersConfigs)
 }
 
-func (c *Config) GetCurrentVersionAnalyzerArgumentValues() *versionanalyzers.ArgumentValues {
+func (c *Config) GetCurrentVersionAnalyzerArgumentValues() *models.ArgumentValues {
 	return c.VersionAnalyzersArgumentValues[c.CurrentVersionAnalyzerName]
 }

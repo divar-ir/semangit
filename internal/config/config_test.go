@@ -4,8 +4,8 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/suite"
 	"os"
+	"semangit/internal/models/versionanalyzers"
 	"semangit/internal/utils"
-	"semangit/internal/versionanalyzers/helm"
 	"testing"
 )
 
@@ -32,8 +32,8 @@ func (s *ConfigTestSuite) TearDownTest() {
 func (s *ConfigTestSuite) AddRequiredFlags() {
 	s.cmd = &cobra.Command{}
 	s.cmd.Flags().String("repo-dir", "", "")
-	s.cmd.Flags().String("src-rev", "", "")
-	s.cmd.Flags().String("dest-rev", "", "")
+	s.cmd.Flags().String("old-rev", "", "")
+	s.cmd.Flags().String("new-rev", "", "")
 	s.cmd.Flags().String("version-analyzer-name", "", "")
 	s.cmd.Flags().String("helm-root-dir", "", "")
 }
@@ -41,10 +41,10 @@ func (s *ConfigTestSuite) AddRequiredFlags() {
 func (s *ConfigTestSuite) TestExtraArguments() {
 	s.AddRequiredFlags()
 	s.NoError(s.cmd.Flags().Set("version-analyzer-name", "helm"))
-	s.NoError(s.cmd.Flags().Set("helm-"+helm.ArgumentKeyRootDir, "test-value"))
+	s.NoError(s.cmd.Flags().Set("helm-"+versionanalyzers.HelmArgumentKeyRootDir, "test-value"))
 	conf, err := LoadConfig(s.cmd)
 	s.NoError(err)
-	s.Equal(*(*conf.GetCurrentVersionAnalyzerArgumentValues())[helm.ArgumentKeyRootDir], "test-value")
+	s.Equal(*(*conf.GetCurrentVersionAnalyzerArgumentValues())[versionanalyzers.HelmArgumentKeyRootDir], "test-value")
 }
 
 func (s *ConfigTestSuite) TestNilFlags() {
@@ -53,10 +53,10 @@ func (s *ConfigTestSuite) TestNilFlags() {
 	s.cmd.Flags().String("repo-dir", "", "")
 	_, err = LoadConfig(s.cmd)
 	s.Error(err)
-	s.cmd.Flags().String("src-rev", "", "")
+	s.cmd.Flags().String("old-rev", "", "")
 	_, err = LoadConfig(s.cmd)
 	s.Error(err)
-	s.cmd.Flags().String("dest-rev", "", "")
+	s.cmd.Flags().String("new-rev", "", "")
 	_, err = LoadConfig(s.cmd)
 	s.Error(err)
 	s.cmd.Flags().String("version-analyzer-name", "", "")

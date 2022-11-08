@@ -2,7 +2,7 @@ package base
 
 import (
 	"golang.org/x/mod/semver"
-	"semangit/internal/versionanalyzers"
+	"semangit/internal/models"
 )
 
 type BaseAnalyzer struct {
@@ -13,16 +13,16 @@ func (a *BaseAnalyzer) GetName() string {
 	panic("not implemented")
 }
 
-func (a *BaseAnalyzer) ChangeNeedsVersionUpdate(changedFilePaths []string, extraArgs *versionanalyzers.ArgumentValues) bool {
+func (a *BaseAnalyzer) ChangeNeedsVersionUpdate(changedFilePaths []string, extraArgs *models.ArgumentValues) bool {
 	panic("not implemented")
 }
 
-func (a *BaseAnalyzer) ReadVersion(projectRootDir string, extraArgs *versionanalyzers.ArgumentValues) (string, error) {
+func (a *BaseAnalyzer) ReadVersion(projectRootDir string, extraArgs *models.ArgumentValues) (string, error) {
 	panic("not implemented")
 }
 
-func (a *BaseAnalyzer) GetExtraArgumentDefinitions() []versionanalyzers.ArgumentDefinition {
-	return []versionanalyzers.ArgumentDefinition{}
+func (a *BaseAnalyzer) GetExtraArgumentDefinitions() []models.ArgumentDefinition {
+	return []models.ArgumentDefinition{}
 }
 
 // CompareVersions Returns 0 if the two version are equal, negative if left < right, and positive if left > right.

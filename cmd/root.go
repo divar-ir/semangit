@@ -4,7 +4,8 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"os"
-	"semangit/internal/versionanalyzers/repo"
+	"semangit/internal/models/repo"
+	_ "semangit/internal/models/versionanalyzers" // Call init function in all version analyzers
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -27,16 +28,16 @@ func InitializeFlags() {
 		"The repository directory",
 	)
 	rootCmd.Flags().StringP(
-		"src-rev",
+		"old-rev",
 		"s",
 		"",
-		"The source git revision",
+		"The old git revision",
 	)
 	rootCmd.Flags().StringP(
-		"dest-rev",
+		"new-rev",
 		"d",
 		"",
-		"The destination git revision",
+		"The new git revision",
 	)
 	rootCmd.Flags().StringP(
 		"version-analyzer-name",
@@ -48,6 +49,7 @@ func InitializeFlags() {
 }
 
 func Execute() {
+	InitializeFlags()
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
