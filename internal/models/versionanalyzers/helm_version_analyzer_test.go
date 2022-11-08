@@ -1,11 +1,11 @@
-package helm
+package versionanalyzers
 
 import (
 	"github.com/stretchr/testify/suite"
 	"os"
+	"semangit/internal/models"
+	"semangit/internal/models/repo"
 	"semangit/internal/utils"
-	"semangit/internal/versionanalyzers"
-	"semangit/internal/versionanalyzers/repo"
 	"testing"
 )
 
@@ -60,7 +60,7 @@ func (s *HelmVersionAnalyzerTestSuite) TestRepositoryContainsHelmVersionAnalyzer
 
 func (s *HelmVersionAnalyzerTestSuite) TestCanReadChartVersion() {
 	helmRootDir := "."
-	version := utils.GetResultOrPanic(s.helmVersionAnalyzer.ReadVersion(".", &versionanalyzers.ArgumentValues{
+	version := utils.GetResultOrPanic(s.helmVersionAnalyzer.ReadVersion(".", &models.ArgumentValues{
 		ArgumentKeyRootDir: &helmRootDir,
 	}))
 	s.Equal("1.2.3", version)
@@ -68,7 +68,7 @@ func (s *HelmVersionAnalyzerTestSuite) TestCanReadChartVersion() {
 
 func (s *HelmVersionAnalyzerTestSuite) TestVersionUpdateIsNotNeededWhenNoChangeIsMade() {
 	helmRootDir := "."
-	needsVersionUpdate := s.helmVersionAnalyzer.ChangeNeedsVersionUpdate([]string{}, &versionanalyzers.ArgumentValues{
+	needsVersionUpdate := s.helmVersionAnalyzer.ChangeNeedsVersionUpdate([]string{}, &models.ArgumentValues{
 		ArgumentKeyRootDir: &helmRootDir,
 	})
 	s.False(needsVersionUpdate)
@@ -78,7 +78,7 @@ func (s *HelmVersionAnalyzerTestSuite) TestVersionUpdateIsNotNeededWhenChangesAr
 	helmRootDir := "/some/project/helm/"
 	needsVersionUpdate := s.helmVersionAnalyzer.ChangeNeedsVersionUpdate([]string{
 		"/some/project/non-helm.txt",
-	}, &versionanalyzers.ArgumentValues{
+	}, &models.ArgumentValues{
 		ArgumentKeyRootDir: &helmRootDir,
 	})
 	s.False(needsVersionUpdate)
@@ -88,7 +88,7 @@ func (s *HelmVersionAnalyzerTestSuite) TestVersionUpdateIsNotNeededWhenChangesAr
 	helmRootDir := "/some/project/helm/"
 	needsVersionUpdate := s.helmVersionAnalyzer.ChangeNeedsVersionUpdate([]string{
 		"/some/project/helm/Chart.yaml",
-	}, &versionanalyzers.ArgumentValues{
+	}, &models.ArgumentValues{
 		ArgumentKeyRootDir: &helmRootDir,
 	})
 	s.False(needsVersionUpdate)
@@ -99,7 +99,7 @@ func (s *HelmVersionAnalyzerTestSuite) TestVersionUpdateIsNeededWhenSomeChangesA
 	needsVersionUpdate := s.helmVersionAnalyzer.ChangeNeedsVersionUpdate([]string{
 		"/some/project/helm/templates/deployment.yaml",
 		"/some/project/non-helm.txt",
-	}, &versionanalyzers.ArgumentValues{
+	}, &models.ArgumentValues{
 		ArgumentKeyRootDir: &helmRootDir,
 	})
 	s.True(needsVersionUpdate)

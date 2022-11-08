@@ -4,8 +4,8 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"os"
-	_ "semangit/internal/versionanalyzers/helm"
-	"semangit/internal/versionanalyzers/repo"
+	"semangit/internal/models/repo"
+	_ "semangit/internal/models/versionanalyzers"
 )
 
 // rootCmd represents the base command when called without any subcommands

@@ -5,8 +5,8 @@ import (
 	"github.com/spf13/cobra"
 	"semangit/internal/config"
 	"semangit/internal/gitrepo"
+	"semangit/internal/models/repo"
 	"semangit/internal/utils"
-	"semangit/internal/versionanalyzers/repo"
 )
 
 func runSemangit(cmd *cobra.Command, args []string) error {

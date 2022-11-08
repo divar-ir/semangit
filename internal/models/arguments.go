@@ -1,4 +1,4 @@
-package versionanalyzers
+package models
 
 type ArgumentName = string
 type ArgumentValue = string
