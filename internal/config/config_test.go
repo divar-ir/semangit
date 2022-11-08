@@ -32,8 +32,8 @@ func (s *ConfigTestSuite) TearDownTest() {
 func (s *ConfigTestSuite) AddRequiredFlags() {
 	s.cmd = &cobra.Command{}
 	s.cmd.Flags().String("repo-dir", "", "")
-	s.cmd.Flags().String("src-rev", "", "")
-	s.cmd.Flags().String("dest-rev", "", "")
+	s.cmd.Flags().String("old-rev", "", "")
+	s.cmd.Flags().String("new-rev", "", "")
 	s.cmd.Flags().String("version-analyzer-name", "", "")
 	s.cmd.Flags().String("helm-root-dir", "", "")
 }
@@ -53,10 +53,10 @@ func (s *ConfigTestSuite) TestNilFlags() {
 	s.cmd.Flags().String("repo-dir", "", "")
 	_, err = LoadConfig(s.cmd)
 	s.Error(err)
-	s.cmd.Flags().String("src-rev", "", "")
+	s.cmd.Flags().String("old-rev", "", "")
 	_, err = LoadConfig(s.cmd)
 	s.Error(err)
-	s.cmd.Flags().String("dest-rev", "", "")
+	s.cmd.Flags().String("new-rev", "", "")
 	_, err = LoadConfig(s.cmd)
 	s.Error(err)
 	s.cmd.Flags().String("version-analyzer-name", "", "")

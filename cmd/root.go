@@ -28,16 +28,16 @@ func InitializeFlags() {
 		"The repository directory",
 	)
 	rootCmd.Flags().StringP(
-		"src-rev",
+		"old-rev",
 		"s",
 		"",
-		"The source git revision",
+		"The old git revision",
 	)
 	rootCmd.Flags().StringP(
-		"dest-rev",
+		"new-rev",
 		"d",
 		"",
-		"The destination git revision",
+		"The new git revision",
 	)
 	rootCmd.Flags().StringP(
 		"version-analyzer-name",

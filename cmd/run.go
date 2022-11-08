@@ -14,15 +14,15 @@ func runSemangit(cmd *cobra.Command, args []string) error {
 	versionAnalyzer := repo.GetVersionAnalyzer(conf.CurrentVersionAnalyzerName)
 	repoManager := gitrepo.NewGitRepoManger(conf.RepoDir)
 
-	if conf.SrcRevision != gitrepo.RevisionNone {
-		repoManager.Checkout(conf.SrcRevision)
+	if conf.OldRevision != gitrepo.RevisionNone {
+		repoManager.Checkout(conf.OldRevision)
 	}
-	srcVersion := utils.GetResultOrPanic(versionAnalyzer.ReadVersion(conf.RepoDir, conf.GetCurrentVersionAnalyzerArgumentValues()))
-	repoManager.Checkout(conf.DestRevision)
-	destVersion := utils.GetResultOrPanic(versionAnalyzer.ReadVersion(conf.RepoDir, conf.GetCurrentVersionAnalyzerArgumentValues()))
-	changedFiles := repoManager.ListChangedFiles(conf.SrcRevision, conf.DestRevision)
+	oldVersion := utils.GetResultOrPanic(versionAnalyzer.ReadVersion(conf.RepoDir, conf.GetCurrentVersionAnalyzerArgumentValues()))
+	repoManager.Checkout(conf.NewRevision)
+	newVersion := utils.GetResultOrPanic(versionAnalyzer.ReadVersion(conf.RepoDir, conf.GetCurrentVersionAnalyzerArgumentValues()))
+	changedFiles := repoManager.ListChangedFiles(conf.OldRevision, conf.NewRevision)
 	needsUpdate := versionAnalyzer.ChangeNeedsVersionUpdate(changedFiles, conf.GetCurrentVersionAnalyzerArgumentValues())
-	if needsUpdate && versionAnalyzer.CompareVersions(srcVersion, destVersion) >= 0 {
+	if needsUpdate && versionAnalyzer.CompareVersions(oldVersion, newVersion) >= 0 {
 		return errors.New("Version needs to be updated! Version analyzer: " + versionAnalyzer.GetName())
 	}
 	return nil

@@ -63,18 +63,18 @@ func (s *TestSuite) TestCanCheckoutToAnotherBranch() {
 }
 
 func (s *TestSuite) TestCanListChangedFiles() {
-	srcRev := s.runGitCommand("log", "-1", "--pretty=%H")
-	srcRev = strings.TrimSpace(srcRev)
-	s.NotEmpty(srcRev)
+	oldRev := s.runGitCommand("log", "-1", "--pretty=%H")
+	oldRev = strings.TrimSpace(oldRev)
+	s.NotEmpty(oldRev)
 
 	s.runCommand("touch", path.Join(s.repoDir, "newfile.txt"))
 	s.runGitCommand("add", ".")
 	s.runGitCommand("commit", "-m", "Add new file")
 
-	destRev := s.runGitCommand("log", "-1", "--pretty=%H")
-	destRev = strings.TrimSpace(destRev)
-	s.NotEmpty(destRev)
-	changedFiles := s.repoManager.ListChangedFiles(srcRev, destRev)
+	newRev := s.runGitCommand("log", "-1", "--pretty=%H")
+	newRev = strings.TrimSpace(newRev)
+	s.NotEmpty(newRev)
+	changedFiles := s.repoManager.ListChangedFiles(oldRev, newRev)
 	s.Equal([]string{"newfile.txt"}, changedFiles)
 }
 
@@ -83,18 +83,18 @@ func (s *TestSuite) TestChangedFilesIncludeBothOldAndNewFilenamesOnRename() {
 	s.runGitCommand("add", ".")
 	s.runGitCommand("commit", "-m", "Add file1")
 
-	srcRev := s.runGitCommand("log", "-1", "--pretty=%H")
-	srcRev = strings.TrimSpace(srcRev)
-	s.NotEmpty(srcRev)
+	oldRev := s.runGitCommand("log", "-1", "--pretty=%H")
+	oldRev = strings.TrimSpace(oldRev)
+	s.NotEmpty(oldRev)
 
 	s.runCommand("mv", path.Join(s.repoDir, "file1.txt"), path.Join(s.repoDir, "file2.txt"))
 	s.runGitCommand("add", ".")
 	s.runGitCommand("commit", "-m", "Rename file1 to file2")
 
-	destRev := s.runGitCommand("log", "-1", "--pretty=%H")
-	destRev = strings.TrimSpace(destRev)
-	s.NotEmpty(destRev)
-	changedFiles := s.repoManager.ListChangedFiles(srcRev, destRev)
+	newRev := s.runGitCommand("log", "-1", "--pretty=%H")
+	newRev = strings.TrimSpace(newRev)
+	s.NotEmpty(newRev)
+	changedFiles := s.repoManager.ListChangedFiles(oldRev, newRev)
 	changedFilesStr := strings.Join(changedFiles, " ")
 	s.True(strings.Contains(changedFilesStr, "file1.txt"))
 	s.True(strings.Contains(changedFilesStr, "file2.txt"))
