@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"fmt"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"semangit/internal/config"
 	"semangit/internal/gitrepo"
@@ -17,13 +17,13 @@ func runSemangit(cmd *cobra.Command, args []string) error {
 	if conf.SrcRevision != gitrepo.RevisionNone {
 		repoManager.Checkout(conf.SrcRevision)
 	}
-
-	// TODO: Check if r.versionAnalyzer.ChangeNeedsVersionUpdate
 	srcVersion := utils.GetResultOrPanic(versionAnalyzer.ReadVersion(conf.RepoDir, conf.GetCurrentVersionAnalyzerArgumentValues()))
 	repoManager.Checkout(conf.DestRevision)
 	toVersion := utils.GetResultOrPanic(versionAnalyzer.ReadVersion(conf.RepoDir, conf.GetCurrentVersionAnalyzerArgumentValues()))
-
-	fmt.Printf("TODO: Compare versions! From Version: %s To Version: %s\n", srcVersion, toVersion)
-	fmt.Printf("Compare result: %d\n", versionAnalyzer.CompareVersions(srcVersion, toVersion))
+	changedFiles := repoManager.ListChangedFiles(conf.SrcRevision, conf.DestRevision)
+	needsUpdate := versionAnalyzer.ChangeNeedsVersionUpdate(changedFiles, conf.GetCurrentVersionAnalyzerArgumentValues())
+	if needsUpdate && versionAnalyzer.CompareVersions(srcVersion, toVersion) == 0 {
+		return errors.New(versionAnalyzer.GetName() + "'s version needs to be updated!")
+	}
 	return nil
 }

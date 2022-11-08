@@ -4,6 +4,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"os"
+	_ "semangit/internal/versionanalyzers/helm"
 	"semangit/internal/versionanalyzers/repo"
 )
 
@@ -48,6 +49,7 @@ func InitializeFlags() {
 }
 
 func Execute() {
+	InitializeFlags()
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)

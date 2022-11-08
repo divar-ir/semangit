@@ -54,7 +54,7 @@ func (s *HelmVersionAnalyzerTestSuite) TearDownTest() {
 }
 
 func (s *HelmVersionAnalyzerTestSuite) TestRepositoryContainsHelmVersionAnalyzer() {
-	analyzer := repo.GetVersionAnalyzer(VersionAnalyzerNameHelm)
+	analyzer := repo.GetVersionAnalyzer(versionAnalyzerNameHelm)
 	s.IsType(&HelmVersionAnalyzer{}, analyzer)
 }
 

@@ -26,20 +26,20 @@ func (m *gitRepoManager) Checkout(refName string) {
 }
 
 // ListChangedFiles Returns the list of filenames that are changed between the two given git revisions.
-func (m *gitRepoManager) ListChangedFiles(fromRevision string, toRevision string) []string {
-	fromHash := utils.GetResultOrPanic(m.repo.ResolveRevision(plumbing.Revision(fromRevision)))
-	fromCommit := utils.GetResultOrPanic(m.repo.CommitObject(*fromHash))
-	toHash := utils.GetResultOrPanic(m.repo.ResolveRevision(plumbing.Revision(toRevision)))
-	toCommit := utils.GetResultOrPanic(m.repo.CommitObject(*toHash))
-	patch := utils.GetResultOrPanic(fromCommit.Patch(toCommit))
+func (m *gitRepoManager) ListChangedFiles(srcRevision string, destRevision string) []string {
+	srcHash := utils.GetResultOrPanic(m.repo.ResolveRevision(plumbing.Revision(srcRevision)))
+	srcCommit := utils.GetResultOrPanic(m.repo.CommitObject(*srcHash))
+	destHash := utils.GetResultOrPanic(m.repo.ResolveRevision(plumbing.Revision(destRevision)))
+	destCommit := utils.GetResultOrPanic(m.repo.CommitObject(*destHash))
+	patch := utils.GetResultOrPanic(srcCommit.Patch(destCommit))
 	filePathsSet := make(map[string]bool)
 	for _, filePatch := range patch.FilePatches() {
-		fromFile, toFile := filePatch.Files()
-		if fromFile != nil {
-			filePathsSet[fromFile.Path()] = true
+		srcFile, destFile := filePatch.Files()
+		if srcFile != nil {
+			filePathsSet[srcFile.Path()] = true
 		}
-		if toFile != nil {
-			filePathsSet[toFile.Path()] = true
+		if destFile != nil {
+			filePathsSet[destFile.Path()] = true
 		}
 	}
 
