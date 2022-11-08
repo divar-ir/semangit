@@ -22,7 +22,7 @@ func runSemangit(cmd *cobra.Command, args []string) error {
 	destVersion := utils.GetResultOrPanic(versionAnalyzer.ReadVersion(conf.RepoDir, conf.GetCurrentVersionAnalyzerArgumentValues()))
 	changedFiles := repoManager.ListChangedFiles(conf.SrcRevision, conf.DestRevision)
 	needsUpdate := versionAnalyzer.ChangeNeedsVersionUpdate(changedFiles, conf.GetCurrentVersionAnalyzerArgumentValues())
-	if needsUpdate && versionAnalyzer.CompareVersions(srcVersion, destVersion) <= 0 {
+	if needsUpdate && versionAnalyzer.CompareVersions(srcVersion, destVersion) >= 0 {
 		return errors.New("Version needs to be updated! Version analyzer: " + versionAnalyzer.GetName())
 	}
 	return nil
