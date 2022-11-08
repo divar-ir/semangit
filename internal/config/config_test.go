@@ -41,10 +41,10 @@ func (s *ConfigTestSuite) AddRequiredFlags() {
 func (s *ConfigTestSuite) TestExtraArguments() {
 	s.AddRequiredFlags()
 	s.NoError(s.cmd.Flags().Set("version-analyzer-name", "helm"))
-	s.NoError(s.cmd.Flags().Set("helm-"+versionanalyzers.ArgumentKeyRootDir, "test-value"))
+	s.NoError(s.cmd.Flags().Set("helm-"+versionanalyzers.HelmArgumentKeyRootDir, "test-value"))
 	conf, err := LoadConfig(s.cmd)
 	s.NoError(err)
-	s.Equal(*(*conf.GetCurrentVersionAnalyzerArgumentValues())[versionanalyzers.ArgumentKeyRootDir], "test-value")
+	s.Equal(*(*conf.GetCurrentVersionAnalyzerArgumentValues())[versionanalyzers.HelmArgumentKeyRootDir], "test-value")
 }
 
 func (s *ConfigTestSuite) TestNilFlags() {

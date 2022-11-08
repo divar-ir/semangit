@@ -5,7 +5,7 @@ import (
 	"github.com/spf13/cobra"
 	"os"
 	"semangit/internal/models/repo"
-	_ "semangit/internal/models/versionanalyzers"
+	_ "semangit/internal/models/versionanalyzers" // Call init function in all version analyzers
 )
 
 // rootCmd represents the base command when called without any subcommands

@@ -19,11 +19,11 @@ func runSemangit(cmd *cobra.Command, args []string) error {
 	}
 	srcVersion := utils.GetResultOrPanic(versionAnalyzer.ReadVersion(conf.RepoDir, conf.GetCurrentVersionAnalyzerArgumentValues()))
 	repoManager.Checkout(conf.DestRevision)
-	toVersion := utils.GetResultOrPanic(versionAnalyzer.ReadVersion(conf.RepoDir, conf.GetCurrentVersionAnalyzerArgumentValues()))
+	destVersion := utils.GetResultOrPanic(versionAnalyzer.ReadVersion(conf.RepoDir, conf.GetCurrentVersionAnalyzerArgumentValues()))
 	changedFiles := repoManager.ListChangedFiles(conf.SrcRevision, conf.DestRevision)
 	needsUpdate := versionAnalyzer.ChangeNeedsVersionUpdate(changedFiles, conf.GetCurrentVersionAnalyzerArgumentValues())
-	if needsUpdate && versionAnalyzer.CompareVersions(srcVersion, toVersion) == 0 {
-		return errors.New(versionAnalyzer.GetName() + "'s version needs to be updated!")
+	if needsUpdate && versionAnalyzer.CompareVersions(srcVersion, destVersion) <= 0 {
+		return errors.New("Version needs to be updated! Version analyzer: " + versionAnalyzer.GetName())
 	}
 	return nil
 }

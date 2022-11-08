@@ -15,7 +15,7 @@ type HelmVersionAnalyzer struct {
 	base.BaseAnalyzer
 }
 
-const ArgumentKeyRootDir = "root-dir"
+const HelmArgumentKeyRootDir = "root-dir"
 const versionAnalyzerNameHelm = "helm"
 
 func New() *HelmVersionAnalyzer {
@@ -29,7 +29,7 @@ func init() {
 func (a *HelmVersionAnalyzer) GetExtraArgumentDefinitions() []models.ArgumentDefinition {
 	return []models.ArgumentDefinition{
 		{
-			Name:         ArgumentKeyRootDir,
+			Name:         HelmArgumentKeyRootDir,
 			DefaultValue: ".",
 			Description:  "The directory where the Chart.yaml exists.",
 		},
@@ -37,7 +37,7 @@ func (a *HelmVersionAnalyzer) GetExtraArgumentDefinitions() []models.ArgumentDef
 }
 
 func (a *HelmVersionAnalyzer) ChangeNeedsVersionUpdate(changedFilesPaths []string, extraArgs *models.ArgumentValues) bool {
-	helmRootDir := *(*extraArgs)[ArgumentKeyRootDir]
+	helmRootDir := *(*extraArgs)[HelmArgumentKeyRootDir]
 	helmRootDir = utils.GetResultOrPanic(filepath.Abs(helmRootDir))
 
 	helmTemplatesRootDir := filepath.Join(helmRootDir, "templates")
@@ -56,7 +56,7 @@ type helmChart struct {
 }
 
 func (a *HelmVersionAnalyzer) ReadVersion(projectRootDir string, extraArgs *models.ArgumentValues) (string, error) {
-	rootDir := filepath.Join(projectRootDir, *(*extraArgs)[ArgumentKeyRootDir])
+	rootDir := filepath.Join(projectRootDir, *(*extraArgs)[HelmArgumentKeyRootDir])
 	chartFileContent, err := os.ReadFile(filepath.Join(rootDir, "Chart.yaml"))
 	if err != nil {
 		return "", err
