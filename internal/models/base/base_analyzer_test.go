@@ -43,6 +43,6 @@ func (s *BaseAnalyzerTestSuite) TestCanCompareMinorVersion() {
 }
 
 func (s *BaseAnalyzerTestSuite) TestCanComparePatchVersion() {
-	s.Equal(s.baseAnalyzer.CompareVersions("2.1.13", "21.1.13"), -1)
-	s.Equal(s.baseAnalyzer.CompareVersions("21.1.13", "2.1.13"), 1)
+	s.Equal(s.baseAnalyzer.CompareVersions("2.1.1", "2.1.13"), -1)
+	s.Equal(s.baseAnalyzer.CompareVersions("2.1.13", "2.1.1"), 1)
 }
