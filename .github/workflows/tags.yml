@@ -20,3 +20,16 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           file: semangit
+      - uses: actions/upload-artifact@v3
+        with:
+          name: semangit
+          path: semangit
+  release-docker:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: semangit
+          path: semangit
+      - run: docker build -t semangit:$GITHUB_REF_NAME .
+      - run: echo "TODO:\ Push the image to DockerHub"
