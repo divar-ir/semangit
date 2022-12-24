@@ -20,3 +20,21 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           file: semangit
+      - uses: actions/upload-artifact@v3
+        with:
+          name: semangit
+          path: semangit
+  release-docker:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: semangit
+          path: semangit
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: divaar
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+      - run: docker build -t divaar/semangit:$GITHUB_REF_NAME .
+      - run: docker push divaar/semangit:$GITHUB_REF_NAME
