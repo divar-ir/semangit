@@ -32,22 +32,25 @@ func LoadConfig(cmd *cobra.Command) (*Config, error) {
 	viper.AutomaticEnv()
 
 	// Read Config from Flags
-	loggerLevel := strings.ToLower(cmd.Flag("logger-level").Value.String())
-	switch loggerLevel {
-	case "trace":
-		logrus.SetLevel(logrus.TraceLevel)
-	case "debug":
-		logrus.SetLevel(logrus.DebugLevel)
-	case "info":
-		logrus.SetLevel(logrus.InfoLevel)
-	case "warn":
-		logrus.SetLevel(logrus.WarnLevel)
-	case "error":
-		logrus.SetLevel(logrus.ErrorLevel)
-	case "fatal":
-		logrus.SetLevel(logrus.FatalLevel)
-	case "panic":
-		logrus.SetLevel(logrus.PanicLevel)
+	loggerLevelFlag := cmd.Flags().Lookup("logger-level")
+	if loggerLevelFlag != nil {
+		loggerLevel := strings.ToLower(loggerLevelFlag.Value.String())
+		switch loggerLevel {
+		case "trace":
+			logrus.SetLevel(logrus.TraceLevel)
+		case "debug":
+			logrus.SetLevel(logrus.DebugLevel)
+		case "info":
+			logrus.SetLevel(logrus.InfoLevel)
+		case "warn":
+			logrus.SetLevel(logrus.WarnLevel)
+		case "error":
+			logrus.SetLevel(logrus.ErrorLevel)
+		case "fatal":
+			logrus.SetLevel(logrus.FatalLevel)
+		case "panic":
+			logrus.SetLevel(logrus.PanicLevel)
+		}
 	}
 
 	if err := viper.BindPFlag("RepoDir", cmd.Flags().Lookup("repo-dir")); err != nil {
