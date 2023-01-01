@@ -1,8 +1,8 @@
 package config
 
 import (
-	"fmt"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"semangit/internal/models"
@@ -32,19 +32,41 @@ func LoadConfig(cmd *cobra.Command) (*Config, error) {
 	viper.AutomaticEnv()
 
 	// Read Config from Flags
+	loggerLevel := strings.ToLower(cmd.Flag("logger-level").Value.String())
+	switch loggerLevel {
+	case "trace":
+		logrus.SetLevel(logrus.TraceLevel)
+	case "debug":
+		logrus.SetLevel(logrus.DebugLevel)
+	case "info":
+		logrus.SetLevel(logrus.InfoLevel)
+	case "warn":
+		logrus.SetLevel(logrus.WarnLevel)
+	case "error":
+		logrus.SetLevel(logrus.ErrorLevel)
+	case "fatal":
+		logrus.SetLevel(logrus.FatalLevel)
+	case "panic":
+		logrus.SetLevel(logrus.PanicLevel)
+	}
+
 	if err := viper.BindPFlag("RepoDir", cmd.Flags().Lookup("repo-dir")); err != nil {
+		logrus.WithError(err).Error()
 		return nil, errors.WithStack(err)
 	}
 
 	if err := viper.BindPFlag("OldRevision", cmd.Flags().Lookup("old-rev")); err != nil {
+		logrus.WithError(err).Error()
 		return nil, errors.WithStack(err)
 	}
 
 	if err := viper.BindPFlag("NewRevision", cmd.Flags().Lookup("new-rev")); err != nil {
+		logrus.WithError(err).Error()
 		return nil, errors.WithStack(err)
 	}
 
 	if err := viper.BindPFlag("CurrentVersionAnalyzerName", cmd.Flags().Lookup("version-analyzer-name")); err != nil {
+		logrus.WithError(err).Error()
 		return nil, errors.WithStack(err)
 	}
 
@@ -55,6 +77,7 @@ func LoadConfig(cmd *cobra.Command) (*Config, error) {
 		viper.SetConfigFile(configFile)
 
 		if err := viper.ReadInConfig(); err != nil {
+			logrus.WithError(err).Error()
 			return nil, errors.WithStack(err)
 		}
 	}
@@ -63,6 +86,7 @@ func LoadConfig(cmd *cobra.Command) (*Config, error) {
 
 	err := viper.Unmarshal(&config)
 	if err != nil {
+		logrus.WithError(err).Error()
 		return nil, errors.WithStack(err)
 	}
 
@@ -78,8 +102,7 @@ func extractVersionAnalyzersArguments(cmd *cobra.Command) {
 		for _, argDefinition := range versionAnalyzer.GetExtraArgumentDefinitions() {
 			argValue, err := cmd.Flags().GetString(argNamePrefix + argDefinition.Name)
 			if err != nil {
-				// TODO: add logger and write some error
-				_ = fmt.Errorf("couldn't add %v flag: %v", argNamePrefix+argDefinition.Name, err.Error())
+				logrus.Errorf("couldn't add %v flag: %v", argNamePrefix+argDefinition.Name, err.Error())
 				continue
 			}
 			argValues[argDefinition.Name] = &argValue
