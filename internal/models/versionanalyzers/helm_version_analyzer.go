@@ -41,10 +41,10 @@ func (a *HelmVersionAnalyzer) ChangeNeedsVersionUpdate(changedFilesPaths []strin
 	helmRootDir = utils.GetResultOrPanic(filepath.Abs(helmRootDir))
 
 	helmTemplatesRootDir := filepath.Join(helmRootDir, "templates")
+	valuesPath := filepath.Join(helmRootDir, "values.yaml")
 	for _, path := range changedFilesPaths {
 		absPath := utils.GetResultOrPanic(filepath.Abs(path))
-		valuesPath := filepath.Join(helmRootDir, "values.yaml")
-		if strings.HasPrefix(path, helmTemplatesRootDir) || absPath == valuesPath {
+		if strings.HasPrefix(absPath, helmTemplatesRootDir) || absPath == valuesPath {
 			return true
 		}
 	}
