@@ -50,6 +50,7 @@ func (s *ConfigTestSuite) TestExtraArguments() {
 }
 
 func (s *ConfigTestSuite) TestNilFlags() {
+	s.cmd.Flags().String("log-level", "info", "")
 	_, err := LoadConfig(s.cmd)
 	s.Error(err)
 	s.cmd.Flags().String("repo-dir", "", "")
@@ -65,9 +66,6 @@ func (s *ConfigTestSuite) TestNilFlags() {
 	_, err = LoadConfig(s.cmd)
 	s.NoError(err)
 	s.cmd.Flags().String("helm-root-dir", "", "")
-	_, err = LoadConfig(s.cmd)
-	s.NoError(err)
-	s.cmd.Flags().String("log-level", "", "")
 	_, err = LoadConfig(s.cmd)
 	s.NoError(err)
 }
@@ -86,46 +84,19 @@ func (s *ConfigTestSuite) TestConfigFile() {
 
 func (s *ConfigTestSuite) TestLogLevelFlag() {
 	s.AddRequiredFlags()
+	s.setLevelAndTestLogLevel("trace", logrus.TraceLevel)
+	s.setLevelAndTestLogLevel("debug", logrus.DebugLevel)
+	s.setLevelAndTestLogLevel("info", logrus.InfoLevel)
+	s.setLevelAndTestLogLevel("warn", logrus.WarnLevel)
+	s.setLevelAndTestLogLevel("error", logrus.ErrorLevel)
+	s.setLevelAndTestLogLevel("fatal", logrus.FatalLevel)
+	s.setLevelAndTestLogLevel("panic", logrus.PanicLevel)
+}
 
-	err := s.cmd.Flags().Set("log-level", "trace")
+func (s *ConfigTestSuite) setLevelAndTestLogLevel(logLevel string, desiredLevel logrus.Level) {
+	err := s.cmd.Flags().Set("log-level", logLevel)
 	s.NoError(err)
 	_, err = LoadConfig(s.cmd)
 	s.NoError(err)
-	s.Equal(logrus.GetLevel(), logrus.TraceLevel)
-
-	err = s.cmd.Flags().Set("log-level", "debug")
-	s.NoError(err)
-	_, err = LoadConfig(s.cmd)
-	s.NoError(err)
-	s.Equal(logrus.GetLevel(), logrus.DebugLevel)
-
-	err = s.cmd.Flags().Set("log-level", "info")
-	s.NoError(err)
-	_, err = LoadConfig(s.cmd)
-	s.NoError(err)
-	s.Equal(logrus.GetLevel(), logrus.InfoLevel)
-
-	err = s.cmd.Flags().Set("log-level", "warn")
-	s.NoError(err)
-	_, err = LoadConfig(s.cmd)
-	s.NoError(err)
-	s.Equal(logrus.GetLevel(), logrus.WarnLevel)
-
-	err = s.cmd.Flags().Set("log-level", "error")
-	s.NoError(err)
-	_, err = LoadConfig(s.cmd)
-	s.NoError(err)
-	s.Equal(logrus.GetLevel(), logrus.ErrorLevel)
-
-	err = s.cmd.Flags().Set("log-level", "fatal")
-	s.NoError(err)
-	_, err = LoadConfig(s.cmd)
-	s.NoError(err)
-	s.Equal(logrus.GetLevel(), logrus.FatalLevel)
-
-	err = s.cmd.Flags().Set("log-level", "panic")
-	s.NoError(err)
-	_, err = LoadConfig(s.cmd)
-	s.NoError(err)
-	s.Equal(logrus.GetLevel(), logrus.PanicLevel)
+	s.Equal(logrus.GetLevel(), desiredLevel)
 }
