@@ -1,7 +1,6 @@
 package versionanalyzers
 
 import (
-	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 	"os"
 	"path/filepath"
@@ -44,10 +43,7 @@ func (a *HelmVersionAnalyzer) ChangeNeedsVersionUpdate(changedFilesPaths []strin
 	helmTemplatesRootDir := filepath.Join(helmRootDir, "templates")
 	valuesPath := filepath.Join(helmRootDir, "values.yaml")
 	for _, path := range changedFilesPaths {
-		logrus.Debug("Helm Templates Root Dir: ", helmTemplatesRootDir)
-		logrus.Debug("Values Path: ", valuesPath)
 		absPath := utils.GetResultOrPanic(filepath.Abs(path))
-		logrus.Debug("Abs Path: ", absPath)
 		if strings.HasPrefix(absPath, helmTemplatesRootDir) || absPath == valuesPath {
 			return true
 		}
