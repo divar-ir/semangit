@@ -104,3 +104,15 @@ func (s *HelmVersionAnalyzerTestSuite) TestVersionUpdateIsNeededWhenSomeChangesA
 	})
 	s.True(needsVersionUpdate)
 }
+
+func (s *HelmVersionAnalyzerTestSuite) TestVersionUpdateIsNeededWhenSomeChangesAreInsideHelmTemplatesDirWithRelativePath() {
+	helmRootDir, err := os.Getwd()
+	s.NoError(err)
+	needsVersionUpdate := s.helmVersionAnalyzer.ChangeNeedsVersionUpdate([]string{
+		"./templates/deployment.yaml",
+		"./non-helm.txt",
+	}, &models.ArgumentValues{
+		HelmArgumentKeyRootDir: &helmRootDir,
+	})
+	s.True(needsVersionUpdate)
+}
