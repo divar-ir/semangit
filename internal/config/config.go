@@ -32,7 +32,7 @@ func LoadConfig(cmd *cobra.Command) (*Config, error) {
 	viper.AutomaticEnv()
 
 	// Read Config from Flags
-	loggerLevelFlag := cmd.Flags().Lookup("logger-level")
+	loggerLevelFlag := cmd.Flags().Lookup("log-level")
 	if loggerLevelFlag != nil {
 		loggerLevel := strings.ToLower(loggerLevelFlag.Value.String())
 		switch loggerLevel {

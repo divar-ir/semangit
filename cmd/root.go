@@ -46,10 +46,10 @@ func InitializeFlags() {
 		"The name of the version analyzer you want to use",
 	)
 	rootCmd.Flags().StringP(
-		"logger-level",
+		"log-level",
 		"l",
 		"info",
-		"Level of the logger, options are (trace, debug, info, warn, error, fatal, panic)",
+		"Verbosity of Semangit logs. Options: trace, debug, info, warn, error, fatal, panic",
 	)
 	registerVersionAnalyzersArgumentsFlags(rootCmd)
 }

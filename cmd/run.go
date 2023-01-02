@@ -12,28 +12,28 @@ import (
 
 func runSemangit(cmd *cobra.Command, args []string) error {
 	conf := utils.GetResultOrPanic(config.LoadConfig(cmd))
-	logrus.Debug("Computed config:\n", utils.InterfaceToString(conf))
+	logrus.Debug("Loaded config:\n", utils.InterfaceToString(conf))
 	versionAnalyzer := repo.GetVersionAnalyzer(conf.CurrentVersionAnalyzerName)
 	repoManager := gitrepo.NewGitRepoManger(conf.RepoDir)
 
 	if conf.NewRevision != gitrepo.RevisionNone {
 		repoManager.Checkout(conf.NewRevision)
-		logrus.Debug("Successfully checked out on ", conf.NewRevision)
+		logrus.Debug("Successfully checked out the new revision ", conf.NewRevision)
 	}
 
 	newVersion := utils.GetResultOrPanic(versionAnalyzer.ReadVersion(conf.RepoDir, conf.GetCurrentVersionAnalyzerArgumentValues()))
-	logrus.Debug("New Version: ", newVersion)
+	logrus.Info("New Version: ", newVersion)
 
 	repoManager.Checkout(conf.OldRevision)
-	logrus.Debug("Successfully checked out on ", conf.OldRevision)
+	logrus.Debug("Successfully checked out the old revision ", conf.OldRevision)
 	oldVersion := utils.GetResultOrPanic(versionAnalyzer.ReadVersion(conf.RepoDir, conf.GetCurrentVersionAnalyzerArgumentValues()))
-	logrus.Debug("Old Version: ", oldVersion)
+	logrus.Info("Old Version: ", oldVersion)
 
 	changedFiles := repoManager.ListChangedFiles(conf.OldRevision, conf.NewRevision)
 	logrus.Debug("Changed files: ", utils.InterfaceToString(changedFiles))
 
 	needsUpdate := versionAnalyzer.ChangeNeedsVersionUpdate(changedFiles, conf.GetCurrentVersionAnalyzerArgumentValues())
-	logrus.Debug("Needs Update: ", needsUpdate)
+	logrus.Debug("Does the version need update: ", needsUpdate)
 	if needsUpdate && versionAnalyzer.CompareVersions(oldVersion, newVersion) >= 0 {
 		return errors.New("Version needs to be updated! Version analyzer: " + versionAnalyzer.GetName())
 	}
