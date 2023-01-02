@@ -48,6 +48,8 @@ func LoadConfig(cmd *cobra.Command) (*Config, error) {
 		logrus.SetLevel(logrus.FatalLevel)
 	case "panic":
 		logrus.SetLevel(logrus.PanicLevel)
+	default:
+		logrus.Panic("Log level flag's value is invalid")
 	}
 
 	if err := viper.BindPFlag("RepoDir", cmd.Flags().Lookup("repo-dir")); err != nil {
