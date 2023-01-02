@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/suite"
 	"os"
@@ -36,6 +37,7 @@ func (s *ConfigTestSuite) AddRequiredFlags() {
 	s.cmd.Flags().String("new-rev", "", "")
 	s.cmd.Flags().String("version-analyzer-name", "", "")
 	s.cmd.Flags().String("helm-root-dir", "", "")
+	s.cmd.Flags().String("log-level", "", "")
 }
 
 func (s *ConfigTestSuite) TestExtraArguments() {
@@ -65,6 +67,9 @@ func (s *ConfigTestSuite) TestNilFlags() {
 	s.cmd.Flags().String("helm-root-dir", "", "")
 	_, err = LoadConfig(s.cmd)
 	s.NoError(err)
+	s.cmd.Flags().String("log-level", "", "")
+	_, err = LoadConfig(s.cmd)
+	s.NoError(err)
 }
 
 func (s *ConfigTestSuite) TestConfigFile() {
@@ -77,4 +82,50 @@ func (s *ConfigTestSuite) TestConfigFile() {
 	conf, err := LoadConfig(s.cmd)
 	s.NoError(err)
 	s.Equal(conf.RepoDir, "TEST_REPO_DIR")
+}
+
+func (s *ConfigTestSuite) TestLogLevelFlag() {
+	s.AddRequiredFlags()
+
+	err := s.cmd.Flags().Set("log-level", "trace")
+	s.NoError(err)
+	_, err = LoadConfig(s.cmd)
+	s.NoError(err)
+	s.Equal(logrus.GetLevel(), logrus.TraceLevel)
+
+	err = s.cmd.Flags().Set("log-level", "debug")
+	s.NoError(err)
+	_, err = LoadConfig(s.cmd)
+	s.NoError(err)
+	s.Equal(logrus.GetLevel(), logrus.DebugLevel)
+
+	err = s.cmd.Flags().Set("log-level", "info")
+	s.NoError(err)
+	_, err = LoadConfig(s.cmd)
+	s.NoError(err)
+	s.Equal(logrus.GetLevel(), logrus.InfoLevel)
+
+	err = s.cmd.Flags().Set("log-level", "warn")
+	s.NoError(err)
+	_, err = LoadConfig(s.cmd)
+	s.NoError(err)
+	s.Equal(logrus.GetLevel(), logrus.WarnLevel)
+
+	err = s.cmd.Flags().Set("log-level", "error")
+	s.NoError(err)
+	_, err = LoadConfig(s.cmd)
+	s.NoError(err)
+	s.Equal(logrus.GetLevel(), logrus.ErrorLevel)
+
+	err = s.cmd.Flags().Set("log-level", "fatal")
+	s.NoError(err)
+	_, err = LoadConfig(s.cmd)
+	s.NoError(err)
+	s.Equal(logrus.GetLevel(), logrus.FatalLevel)
+
+	err = s.cmd.Flags().Set("log-level", "panic")
+	s.NoError(err)
+	_, err = LoadConfig(s.cmd)
+	s.NoError(err)
+	s.Equal(logrus.GetLevel(), logrus.PanicLevel)
 }
