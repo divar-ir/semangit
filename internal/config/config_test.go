@@ -37,7 +37,7 @@ func (s *ConfigTestSuite) AddRequiredFlags() {
 	s.cmd.Flags().String("new-rev", "", "")
 	s.cmd.Flags().String("version-analyzer-name", "", "")
 	s.cmd.Flags().String("helm-root-dir", "", "")
-	s.cmd.Flags().String("log-level", "", "")
+	s.cmd.Flags().String("log-level", "info", "")
 }
 
 func (s *ConfigTestSuite) TestExtraArguments() {
