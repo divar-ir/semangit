@@ -45,6 +45,12 @@ func InitializeFlags() {
 		"helm",
 		"The name of the version analyzer you want to use",
 	)
+	rootCmd.Flags().StringP(
+		"log-level",
+		"l",
+		"info",
+		"Verbosity of Semangit logs. Options: trace, debug, info, warn, error, fatal, panic",
+	)
 	registerVersionAnalyzersArgumentsFlags(rootCmd)
 }
 

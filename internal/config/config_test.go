@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/suite"
 	"os"
@@ -36,6 +37,7 @@ func (s *ConfigTestSuite) AddRequiredFlags() {
 	s.cmd.Flags().String("new-rev", "", "")
 	s.cmd.Flags().String("version-analyzer-name", "", "")
 	s.cmd.Flags().String("helm-root-dir", "", "")
+	s.cmd.Flags().String("log-level", "info", "")
 }
 
 func (s *ConfigTestSuite) TestExtraArguments() {
@@ -48,6 +50,7 @@ func (s *ConfigTestSuite) TestExtraArguments() {
 }
 
 func (s *ConfigTestSuite) TestNilFlags() {
+	s.cmd.Flags().String("log-level", "info", "")
 	_, err := LoadConfig(s.cmd)
 	s.Error(err)
 	s.cmd.Flags().String("repo-dir", "", "")
@@ -77,4 +80,23 @@ func (s *ConfigTestSuite) TestConfigFile() {
 	conf, err := LoadConfig(s.cmd)
 	s.NoError(err)
 	s.Equal(conf.RepoDir, "TEST_REPO_DIR")
+}
+
+func (s *ConfigTestSuite) TestLogLevelFlag() {
+	s.AddRequiredFlags()
+	s.setLevelAndTestLogLevel("trace", logrus.TraceLevel)
+	s.setLevelAndTestLogLevel("debug", logrus.DebugLevel)
+	s.setLevelAndTestLogLevel("info", logrus.InfoLevel)
+	s.setLevelAndTestLogLevel("warn", logrus.WarnLevel)
+	s.setLevelAndTestLogLevel("error", logrus.ErrorLevel)
+	s.setLevelAndTestLogLevel("fatal", logrus.FatalLevel)
+	s.setLevelAndTestLogLevel("panic", logrus.PanicLevel)
+}
+
+func (s *ConfigTestSuite) setLevelAndTestLogLevel(logLevel string, desiredLevel logrus.Level) {
+	err := s.cmd.Flags().Set("log-level", logLevel)
+	s.NoError(err)
+	_, err = LoadConfig(s.cmd)
+	s.NoError(err)
+	s.Equal(logrus.GetLevel(), desiredLevel)
 }
