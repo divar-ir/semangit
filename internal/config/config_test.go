@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/suite"
 	"os"
 	"semangit/internal/models/versionanalyzers"
@@ -99,4 +100,12 @@ func (s *ConfigTestSuite) setLevelAndTestLogLevel(logLevel string, desiredLevel 
 	_, err = LoadConfig(s.cmd)
 	s.NoError(err)
 	s.Equal(logrus.GetLevel(), desiredLevel)
+}
+
+func (s *ConfigTestSuite) TestLogLevelReadFromEnv() {
+	s.AddRequiredFlags()
+	s.NoError(os.Setenv("SEMANGIT_LOG_LEVEL", "debug"))
+	_, err := LoadConfig(s.cmd)
+	s.NoError(err)
+	s.Equal(viper.GetString("LOG_LEVEL"), "debug")
 }
