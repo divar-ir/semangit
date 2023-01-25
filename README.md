@@ -22,7 +22,7 @@ ENTRYPOINT   semangit run [OPTIONS]
 ```
 
 # 📦 Plugins
-_Semangit_ is founded based on plugins and each of them can have some options to be set, to see the details of all options run `semangit --help` command. Below are some plugins which are currently supported in _Semangit_ project. Feel free to [contribute](https://github.com/divar-ir/semangit#Contribution) and expand the number of version checkers.
+_Semangit_ is founded based on plugins and each of them can have some options to be set, to see the details of all options run `semangit --help` command. Below are some plugins which are currently supported in _Semangit_ project. Feel free to [contribute](#-contribution) and expand the number of version checkers.
 
 ## ❎ Helm chart version checker
 This plugin will force the Helm chart version update on CI if either the package files or the `values.yaml` file is changed.
