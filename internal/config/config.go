@@ -26,7 +26,7 @@ func LoadConfig(cmd *cobra.Command) (*Config, error) {
 	viper.SetDefault("NewRevision", RevisionNone)
 	viper.SetDefault("CurrentVersionAnalyzerName", "helm")
 	viper.SetDefault("VersionAnalyzersArgumentValues", make(map[string]*models.ArgumentValues))
-	viper.SetDefault("Log_Level", "info")
+	viper.SetDefault("LogLevel", "info")
 
 	// Read Config from ENV
 	viper.SetEnvPrefix("semangit")
@@ -34,12 +34,12 @@ func LoadConfig(cmd *cobra.Command) (*Config, error) {
 	viper.AutomaticEnv()
 
 	// Read Config from Flags
-	if err := viper.BindPFlag("Log_Level", cmd.Flags().Lookup("log-level")); err != nil {
+	if err := viper.BindPFlag("LogLevel", cmd.Flags().Lookup("log-level")); err != nil {
 		logrus.WithError(err).Error()
 		return nil, errors.WithStack(err)
 	}
 
-	logLevel := viper.GetString("Log_Level")
+	logLevel := viper.GetString("LogLevel")
 	switch logLevel {
 	case "trace":
 		logrus.SetLevel(logrus.TraceLevel)
