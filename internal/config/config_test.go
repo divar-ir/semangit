@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/suite"
 	"os"
 	"semangit/internal/models/versionanalyzers"
@@ -99,4 +100,20 @@ func (s *ConfigTestSuite) setLevelAndTestLogLevel(logLevel string, desiredLevel 
 	_, err = LoadConfig(s.cmd)
 	s.NoError(err)
 	s.Equal(logrus.GetLevel(), desiredLevel)
+}
+
+func (s *ConfigTestSuite) TestReadConfigFromEnv() {
+	s.AddRequiredFlags()
+	s.NoError(os.Setenv("SEMANGIT_REPODIR", "./src"))
+	s.NoError(os.Setenv("SEMANGIT_OLDREVISION", "master"))
+	s.NoError(os.Setenv("SEMANGIT_NEWREVISION", "my-branch"))
+	s.NoError(os.Setenv("SEMANGIT_CURRENTVERSIONANALYZERNAME", "helm"))
+	s.NoError(os.Setenv("SEMANGIT_LOGLEVEL", "debug"))
+	_, err := LoadConfig(s.cmd)
+	s.NoError(err)
+	s.Equal(viper.GetString("RepoDir"), "./src")
+	s.Equal(viper.GetString("OldRevision"), "master")
+	s.Equal(viper.GetString("NewRevision"), "my-branch")
+	s.Equal(viper.GetString("CurrentVersionAnalyzerName"), "helm")
+	s.Equal(viper.GetString("LogLevel"), "debug")
 }
