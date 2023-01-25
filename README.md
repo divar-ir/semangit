@@ -36,20 +36,15 @@ check-helm-version:
   variables:
     GIT_DEPTH: 0
     GIT_STRATEGY: clone
-    SEMANGIT_REPO_DIR: .
-    SEMANGIT_OLD_REVISION: ${CI_DEFAULT_BRANCH}
-    SEMANGIT_NEW_REVISION: ${CI_COMMIT_REF_NAME}
-    SEMANGIT_HELM_ROOT_DIR: .
-    SEMANGIT_LOG_LEVEL: info # Options: trace, debug, info, warn, error, fatal, panic
+    SEMANGIT_REPODIR: .
+    SEMANGIT_OLDREVISION: ${CI_DEFAULT_BRANCH}
+    SEMANGIT_NEWREVISION: ${CI_COMMIT_REF_NAME}
+    SEMANGIT_HELMROOTDIR: .
+    SEMANGIT_LOGLEVEL: info # Options: trace, debug, info, warn, error, fatal, panic
   script:
-    - git branch ${SEMANGIT_OLD_REVISION} origin/${SEMANGIT_OLD_REVISION}
-    - git branch ${SEMANGIT_NEW_REVISION} origin/${SEMANGIT_NEW_REVISION}
+    - git branch ${SEMANGIT_OLDREVISION} origin/${SEMANGIT_OLDREVISION}
+    - git branch ${SEMANGIT_NEWREVISION} origin/${SEMANGIT_NEWREVISION}
     - semangit run
-      --old-rev ${SEMANGIT_OLD_REVISION}
-      --new-rev ${SEMANGIT_NEW_REVISION}
-      --version-analyzer-name helm
-      --helm-root-dir ${SEMANGIT_HELM_ROOT_DIR}
-      --log-level ${SEMANGIT_LOG_LEVEL}
   only:
     refs:
       - merge_requests # Override this section if you don't want this behaviour
