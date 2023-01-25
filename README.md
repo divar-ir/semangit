@@ -1,35 +1,14 @@
-# ❎ Semangit
+# 🩺 Semangit
 [![Master Workflow](https://github.com/emranprojects/semangit/actions/workflows/master.yml/badge.svg)](https://github.com/emranprojects/semangit/actions/workflows/master.yml)
 ![Test Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/emranbm/03d07927044bdfe73aee59e6193dd8d5/raw/badge-coverage-semangit.json)  
 A simple tool to force version update in CI.  
 We've all experienced commits forgetting to update the corresponding version on the codebase; like changing a helm chart template without increasing the `version` in `Chart.yaml`. *Semangit* helps to prevent such mistakes by checking whether a change needs a corresponding version increase.
 
-# 📖 How to use
-The _Semangit_ project can be used in various ways. The possible ways are listed below.
+# 📖 Quick start guide
+By now, the _Semangit_ project only support _helm_ version checker. To use it on your CI, use one of the following templates:
 
-## 📃 Compiled binary
-The compiled version of the project can be found in [releases page](https://github.com/divar-ir/semangit/releases), you can simply download the artifact and run it as a command:
-```bash
-./semangit run [OPTIONS]
-```
-
-## 🐳 Official image
-_Semangit_ also comes with an official docker image. The image can be found in [here](https://hub.docker.com/r/divaar/semangit). A sample usage is as follows:
-```dockerfile
-FROM divaar/semangit:0.1.5
-
-ENTRYPOINT   semangit run [OPTIONS]
-```
-
-# 📦 Plugins
-_Semangit_ is founded based on plugins and each of them can have some options to be set, to see the details of all options run `semangit --help` command. Below are some plugins which are currently supported in _Semangit_ project. Feel free to [contribute](#-contribution) and expand the number of version checkers.
-
-## ❎ Helm chart version checker
-This plugin will force the Helm chart version update on CI if either the package files or the `values.yaml` file is changed.
-
-### 📖 Usage
-#### Gitlab
-Sample usage of this plugin in Gitlab CI is shown below:
+## Gitlab
+Sample usage of the _helm_ version checker in Gitlab CI is shown below:
 ```yaml
 check-helm-version:
   stage: lint
@@ -50,6 +29,19 @@ check-helm-version:
     refs:
       - merge_requests # Override this section if you don't want this behaviour
   before_script: []
+```
+This plugin will fail the CI job if either the template files or the `values.yaml` file is changed.
+
+## 📃 Compiled binary
+The compiled version of the project can be found in [releases page](https://github.com/divar-ir/semangit/releases), you can simply download the artifact and run it as a command:
+```bash
+./semangit run [flags]
+```
+
+## 🐳 Official image
+_Semangit_ also comes with an official docker image. The image can be found in [here](https://hub.docker.com/r/divaar/semangit). A sample usage is as follows:
+```bash
+docker run --rm divaar/semangit:0.1.5 semangit run [flags]
 ```
 
 # 💡 Contribution
