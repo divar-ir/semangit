@@ -28,7 +28,8 @@ _Semangit_ is founded based on plugins and each of them can have some options to
 This plugin will force the Helm chart version update on CI if either the package files or the `values.yaml` file is changed.
 
 ### 📖 Usage
-A sample usage of this plugin in CI template can be as bellow:
+#### Gitlab
+Sample usage of this plugin in Gitlab CI is shown below:
 ```yaml
 check-helm-version:
   stage: lint
