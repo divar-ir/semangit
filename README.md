@@ -53,7 +53,7 @@ check-helm-version:
 ```
 
 # 💡 Contribution
-Fortunately the plugins of _Semangit_ project are written in a way that you don't have to get in the details of the project. Simply, just create a file in [versionanalyzers](https://github.com/divar-ir/semangit/tree/master/internal/models/versionanalyzers) directory and implement the [VersionAnalyzer](https://github.com/divar-ir/semangit/blob/9443ec422e425166de83269289c4a3ec3b22cd52/internal/models/version_analyzer.go#L3) interface. _Semangit_ will do the rest and register your plugin and after that, the new plugin can be used through the executing options:
+Fortunately, the plugins of _Semangit_ project are written in a way that you don't have to get into the details of the project. Simply, just create a file in [versionanalyzers](https://github.com/divar-ir/semangit/tree/master/internal/models/versionanalyzers) directory and implement the [VersionAnalyzer](https://github.com/divar-ir/semangit/blob/master/internal/models/version_analyzer.go) interface. _Semangit_ will do the rest and register your plugin and after that, the new plugin can be used through the executing options:
 
 ```bash
 semangit run 
@@ -62,5 +62,5 @@ semangit run
 --new-rev HEAD
 --log-level debug
 --version-analyzer-name ${YOUR_DESIRED_PLUGIN_NAME} 
---{EXTRA-ARG-NAME} {EXTRA-ARG-VALUE}
+--{PLUGIN_NAME}-{EXTRA-ARG-NAME} {EXTRA-ARG-VALUE}
 ```
