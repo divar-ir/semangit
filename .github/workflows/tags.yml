@@ -40,5 +40,5 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
       - run: docker build -t divaar/semangit:$GITHUB_REF_NAME .
       - run: docker push divaar/semangit:$GITHUB_REF_NAME
-      - run: docker build -t divaar/semangit:latest .
+      - run: docker tag divaar/semangit:$GITHUB_REF_NAME divaar/semangit:latest
       - run: docker push divaar/semangit:latest .
