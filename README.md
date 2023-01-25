@@ -41,7 +41,7 @@ The compiled version of the project can be found in [releases page](https://gith
 ## 🐳 Official image
 _Semangit_ also comes with an official docker image. The image can be found in [here](https://hub.docker.com/r/divaar/semangit). A sample usage is as follows:
 ```bash
-docker run --rm divaar/semangit:0.1.5 semangit run [flags]
+docker run --rm divaar/semangit:latest semangit run [flags]
 ```
 
 # 💡 Contribution
