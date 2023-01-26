@@ -7,7 +7,7 @@ We've all experienced commits forgetting to update the corresponding version on 
 # 📖 Quick start guide
 By now, the _Semangit_ project only support _helm_ version checker. To use it on your CI, use one of the following templates:
 
-## Gitlab
+## 🚩 Gitlab
 Sample usage of the _helm_ version checker in Gitlab CI is shown below:
 ```yaml
 check-helm-version:
