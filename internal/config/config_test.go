@@ -109,7 +109,7 @@ func (s *ConfigTestSuite) TestReadConfigFromEnv() {
 	s.NoError(os.Setenv("SEMANGIT_NEWREVISION", "my-branch"))
 	s.NoError(os.Setenv("SEMANGIT_CURRENTVERSIONANALYZERNAME", "helm"))
 	s.NoError(os.Setenv("SEMANGIT_LOGLEVEL", "debug"))
-	s.NoError(os.Setenv("SEMANGIT_HELM_ROOT_DIR", "./helm"))
+	s.NoError(os.Setenv("SEMANGIT_HELMROOTDIR", "./helm"))
 	conf, err := LoadConfig(s.cmd)
 	s.NoError(err)
 	s.Equal(viper.GetString("RepoDir"), "./src")
