@@ -5,12 +5,14 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"os"
 	"semangit/internal/models"
 	"semangit/internal/models/repo"
 	"strings"
 )
 
 const RevisionNone = ""
+const EnvsPrefix = "SEMANGIT"
 
 type Config struct {
 	RepoDir                        string                            `json:"repo_dir,omitempty"`
@@ -29,7 +31,7 @@ func LoadConfig(cmd *cobra.Command) (*Config, error) {
 	viper.SetDefault("LogLevel", "info")
 
 	// Read Config from ENV
-	viper.SetEnvPrefix("semangit")
+	viper.SetEnvPrefix(EnvsPrefix)
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
 
@@ -113,6 +115,14 @@ func extractVersionAnalyzersArguments(cmd *cobra.Command) {
 			if err != nil {
 				logrus.Errorf("couldn't add %v flag: %v", argNamePrefix+argDefinition.Name, err.Error())
 				continue
+			}
+
+			envKey := strings.ToUpper(argNamePrefix + argDefinition.Name)
+			envKey = strings.ReplaceAll(envKey, "-", "_")
+			envKey = strings.ReplaceAll(envKey, ".", "_")
+			envValue, ok := os.LookupEnv(EnvsPrefix + "_" + envKey)
+			if ok {
+				argValue = envValue
 			}
 			argValues[argDefinition.Name] = &argValue
 		}
