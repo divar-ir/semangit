@@ -11,6 +11,7 @@ import (
 )
 
 const RevisionNone = ""
+const EnvsPrefix = "SEMANGIT"
 
 type Config struct {
 	RepoDir                        string                            `json:"repo_dir,omitempty"`
@@ -29,7 +30,7 @@ func LoadConfig(cmd *cobra.Command) (*Config, error) {
 	viper.SetDefault("LogLevel", "info")
 
 	// Read Config from ENV
-	viper.SetEnvPrefix("semangit")
+	viper.SetEnvPrefix(EnvsPrefix)
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
 
@@ -102,6 +103,13 @@ func LoadConfig(cmd *cobra.Command) (*Config, error) {
 	return &config, nil
 }
 
+// extractVersionAnalyzersArguments function will try to read version analyzers' arguments values from flags
+// and environment variables. The priority in which the values are read is as follows:
+// environment variables < flags
+// Environment variables are assumed to be in the following format:
+// env: SEMANGIT_{VERSION_ANALYZER_NAME + ARGUMENT_NAME_WITHOUT_UNDERSCORE} (e.q. SEMANGIT_HELMROOTDIR)
+// Flags are also assumed to be in the following format:
+// flag: {VERSION_ANALYZER_NAME}-{ARGUMENT_NAME_WITH_UNDERSCORES_IN_LOWERCASE} (e.q. --helm-root-dir)
 func extractVersionAnalyzersArguments(cmd *cobra.Command) {
 	versionAnalyzersConfigs := make(map[string]*models.ArgumentValues)
 	for _, versionAnalyzer := range repo.GetAllAnalyzers() {
@@ -109,11 +117,22 @@ func extractVersionAnalyzersArguments(cmd *cobra.Command) {
 
 		argNamePrefix := versionAnalyzer.GetName() + "-"
 		for _, argDefinition := range versionAnalyzer.GetExtraArgumentDefinitions() {
-			argValue, err := cmd.Flags().GetString(argNamePrefix + argDefinition.Name)
+			flagName := argNamePrefix + argDefinition.Name // helm-root-dir
+			viperKey := strings.ToUpper(flagName)
+			viperKey = strings.ReplaceAll(viperKey, "-", "")
+			viperKey = strings.ReplaceAll(viperKey, ".", "") // HELMROOTDIR
+			envKey := EnvsPrefix + "_" + viperKey            // SEMANGIT_HELMROOTDIR
+
+			err := viper.BindEnv(envKey, viperKey)
 			if err != nil {
-				logrus.Errorf("couldn't add %v flag: %v", argNamePrefix+argDefinition.Name, err.Error())
-				continue
+				logrus.WithError(err).Error()
 			}
+
+			if err := viper.BindPFlag(viperKey, cmd.Flags().Lookup(flagName)); err != nil {
+				logrus.WithError(err).Error()
+			}
+
+			argValue := viper.GetString(viperKey)
 			argValues[argDefinition.Name] = &argValue
 		}
 		versionAnalyzersConfigs[versionAnalyzer.GetName()] = &argValues
