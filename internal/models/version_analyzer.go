@@ -5,5 +5,5 @@ type VersionAnalyzer interface {
 	ChangeNeedsVersionUpdate(changedFilePaths []string, extraArgs *ArgumentValues) bool
 	ReadVersion(projectRootPath string, extraArgs *ArgumentValues) (string, error)
 	GetExtraArgumentDefinitions() []ArgumentDefinition
-	CompareVersions(left string, right string) int
+	CompareVersions(oldVersion string, newVersion string) int
 }

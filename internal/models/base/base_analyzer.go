@@ -29,13 +29,13 @@ func (a *BaseAnalyzer) GetExtraArgumentDefinitions() []models.ArgumentDefinition
 	return []models.ArgumentDefinition{}
 }
 
-// CompareVersions Returns 0 if the two version are equal, negative if left < right, and positive if left > right.
-func (a *BaseAnalyzer) CompareVersions(left string, right string) int {
-	if len(left) > 0 && left[0] != 'v' {
-		left = "v" + left
+// CompareVersions Returns 0 if the two version are equal, negative if oldVersion < newVersion, and positive if oldVersion > newVersion.
+func (a *BaseAnalyzer) CompareVersions(oldVersion string, newVersion string) int {
+	if len(oldVersion) > 0 && oldVersion[0] != 'v' {
+		oldVersion = "v" + oldVersion
 	}
-	if len(right) > 0 && right[0] != 'v' {
-		right = "v" + right
+	if len(newVersion) > 0 && newVersion[0] != 'v' {
+		newVersion = "v" + newVersion
 	}
-	return semver.Compare(left, right)
+	return semver.Compare(oldVersion, newVersion)
 }

@@ -1,6 +1,8 @@
 package versionanalyzers
 
 import (
+	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 	"os"
 	"path/filepath"
@@ -57,6 +59,9 @@ type helmChart struct {
 
 func (a *HelmVersionAnalyzer) ReadVersion(projectRootDir string, extraArgs *models.ArgumentValues) (string, error) {
 	rootDir := filepath.Join(projectRootDir, *(*extraArgs)[HelmArgumentKeyRootDir])
+	if _, err := os.Stat(filepath.Join(rootDir, "Chart.yaml")); errors.Is(err, os.ErrNotExist) {
+		return "", nil
+	}
 	chartFileContent, err := os.ReadFile(filepath.Join(rootDir, "Chart.yaml"))
 	if err != nil {
 		return "", err
@@ -71,4 +76,12 @@ func (a *HelmVersionAnalyzer) ReadVersion(projectRootDir string, extraArgs *mode
 
 func (a *HelmVersionAnalyzer) GetName() string {
 	return versionAnalyzerNameHelm
+}
+
+func (a *HelmVersionAnalyzer) CompareVersions(oldVersion, newVersion string) int {
+	if oldVersion == "" {
+		logrus.Info("old revision has no 'Chart.yaml' file")
+		return -1
+	}
+	return a.BaseAnalyzer.CompareVersions(oldVersion, newVersion)
 }
