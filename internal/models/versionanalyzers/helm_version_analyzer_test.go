@@ -45,12 +45,14 @@ version: 1.2.3
 # It is recommended to use it with quotes.
 appVersion: "0.1.0"
 `
-	utils.PanicError(os.WriteFile("./Chart.yaml", []byte(chartContent), 0644))
+	s.NoError(os.WriteFile("./Chart.yaml", []byte(chartContent), 0644))
+	s.NoError(os.MkdirAll("./test-dir", os.ModePerm))
 	s.helmVersionAnalyzer = HelmVersionAnalyzer{}
 }
 
 func (s *HelmVersionAnalyzerTestSuite) TearDownTest() {
-	utils.PanicError(os.Remove("./Chart.yaml"))
+	s.NoError(os.Remove("./Chart.yaml"))
+	s.NoError(os.RemoveAll("./test-dir"))
 }
 
 func (s *HelmVersionAnalyzerTestSuite) TestRepositoryContainsHelmVersionAnalyzer() {
@@ -118,11 +120,9 @@ func (s *HelmVersionAnalyzerTestSuite) TestVersionUpdateIsNeededWhenSomeChangesA
 }
 
 func (s *HelmVersionAnalyzerTestSuite) TestNonHelmifiedRevision() {
-	s.NoError(os.MkdirAll("./test-dir", os.ModePerm))
 	helmRootDir := "./test-dir"
 	version := utils.GetResultOrPanic(s.helmVersionAnalyzer.ReadVersion(".", &models.ArgumentValues{
 		HelmArgumentKeyRootDir: &helmRootDir,
 	}))
-	s.Equal("0.0.0", version)
-	s.NoError(os.RemoveAll("./test-dir"))
+	s.Equal("", version)
 }
