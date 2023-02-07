@@ -1,6 +1,7 @@
 package versionanalyzers
 
 import (
+	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
 	"os"
 	"path/filepath"
@@ -57,6 +58,9 @@ type helmChart struct {
 
 func (a *HelmVersionAnalyzer) ReadVersion(projectRootDir string, extraArgs *models.ArgumentValues) (string, error) {
 	rootDir := filepath.Join(projectRootDir, *(*extraArgs)[HelmArgumentKeyRootDir])
+	if _, err := os.Stat(filepath.Join(rootDir, "Chart.yaml")); errors.Is(err, os.ErrNotExist) {
+		return "0.0.0", nil
+	}
 	chartFileContent, err := os.ReadFile(filepath.Join(rootDir, "Chart.yaml"))
 	if err != nil {
 		return "", err

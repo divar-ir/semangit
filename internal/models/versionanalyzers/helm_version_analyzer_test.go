@@ -116,3 +116,13 @@ func (s *HelmVersionAnalyzerTestSuite) TestVersionUpdateIsNeededWhenSomeChangesA
 	})
 	s.True(needsVersionUpdate)
 }
+
+func (s *HelmVersionAnalyzerTestSuite) TestNonHelmifiedRevision() {
+	s.NoError(os.MkdirAll("./test-dir", os.ModePerm))
+	helmRootDir := "./test-dir"
+	version := utils.GetResultOrPanic(s.helmVersionAnalyzer.ReadVersion(".", &models.ArgumentValues{
+		HelmArgumentKeyRootDir: &helmRootDir,
+	}))
+	s.Equal("0.0.0", version)
+	s.NoError(os.RemoveAll("./test-dir"))
+}
